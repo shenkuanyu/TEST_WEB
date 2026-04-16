@@ -305,7 +305,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
     <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 z-50 overflow-y-auto">
       <div className="bg-white rounded-lg max-w-5xl w-full my-4">
         <div className="p-4 border-b flex items-center justify-between">
-          <h2 className="text-xl font-semibold">{product.id ? `編輯產品 #${product.id}` : '新增產品'}</h2>
+          <h2 className="text-xl font-semibold">{product.id ? '編輯產品' : '新增產品'}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-700 text-2xl leading-none">×</button>
         </div>
 
