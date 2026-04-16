@@ -225,6 +225,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
               <div>
                 <label className="label">主圖（用於列表縮圖）</label>
                 <input id="mainImgInput" type="file" accept="image/*" className="input" />
+                <p className="mt-1 text-xs text-gray-400">建議尺寸：800 × 600 px（4:3 比例），會用於產品列表卡片縮圖</p>
                 {data.image && <img src={data.image} className="w-24 h-24 mt-2 rounded object-cover" alt="" />}
               </div>
               <div className="flex items-center gap-4">
@@ -402,6 +403,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
             <div className="space-y-4">
               <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
                 這裡管理「產品相簿」（顯示在產品內頁的圖片牆）。主圖（列表縮圖）請至「基本資料」分頁設定。
+                <br /><span className="text-blue-600">建議尺寸：800 × 600 px（4:3 比例），縮圖會以正方形裁切顯示</span>
               </div>
               <div>
                 <label className="inline-flex items-center gap-2 cursor-pointer btn-outline">

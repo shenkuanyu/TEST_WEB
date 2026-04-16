@@ -64,6 +64,7 @@ export default function AdminBanners() {
               <div>
                 <label className="label">圖片{!editing.id && ' *'}</label>
                 <input type="file" name="image" accept="image/*" className="input" required={!editing.id} />
+                <p className="mt-1 text-xs text-gray-400">建議尺寸：1920 × 800 px（比例約 16:7），橫幅寬圖效果最佳</p>
                 {editing.image && <img src={editing.image} className="w-full aspect-[16/7] mt-2 rounded object-cover" alt="" />}
               </div>
               <div className="flex gap-4 items-center">

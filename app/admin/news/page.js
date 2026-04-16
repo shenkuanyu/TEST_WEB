@@ -69,6 +69,7 @@ export default function AdminNews() {
               <div>
                 <label className="label">封面圖</label>
                 <input type="file" name="cover_image" accept="image/*" className="input" />
+                <p className="mt-1 text-xs text-gray-400">建議尺寸：960 × 540 px（16:9 比例），用於消息列表及內頁封面</p>
                 {editing.cover_image && <img src={editing.cover_image} className="w-32 h-20 mt-2 rounded object-cover" alt="" />}
               </div>
               <label className="flex items-center gap-2"><input type="checkbox" name="published" defaultChecked={editing.published !== 0} value="1" /> 發布</label>
