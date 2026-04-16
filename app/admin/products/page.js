@@ -22,6 +22,25 @@ export default function AdminProducts() {
     load();
   }
 
+  async function moveProduct(idx, direction) {
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= list.length) return;
+    const arr = [...list];
+    [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+    setList(arr);
+    // 更新兩個產品的 sort_order
+    for (let i = 0; i < arr.length; i++) {
+      const p = arr[i];
+      if (p.sort_order !== i) {
+        const fd = new FormData();
+        fd.append('name', p.name);
+        fd.append('sort_order', i);
+        fd.append('published', p.published ? '1' : '');
+        await fetch(`/api/admin/products/${p.id}`, { method: 'PUT', body: fd });
+      }
+    }
+  }
+
   const [showCats, setShowCats] = useState(false);
   const [newCatName, setNewCatName] = useState('');
   const [editingCat, setEditingCat] = useState(null);
@@ -111,14 +130,22 @@ export default function AdminProducts() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left">
             <tr>
-              <th className="p-3">ID</th><th>圖片</th><th>型號</th><th>名稱</th><th>分類</th><th>狀態</th><th>操作</th>
+              <th className="p-3">排序</th><th>圖片</th><th>型號</th><th>名稱</th><th>分類</th><th>狀態</th><th>操作</th>
             </tr>
           </thead>
           <tbody>
-            {list.map(p => (
+            {list.map((p, idx) => (
               <tr key={p.id} className="border-t">
-                <td className="p-3 text-gray-500">#{p.id}</td>
-                <td><img src={p.image || '/uploads/placeholder.svg'} className="w-12 h-12 object-cover rounded" alt="" /></td>
+                <td className="p-3">
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-500 w-6 text-center">{idx + 1}</span>
+                    <div className="flex flex-col">
+                      <button onClick={() => moveProduct(idx, -1)} disabled={idx === 0} className="text-gray-400 hover:text-brand disabled:opacity-20 text-xs leading-none">▲</button>
+                      <button onClick={() => moveProduct(idx, 1)} disabled={idx === list.length - 1} className="text-gray-400 hover:text-brand disabled:opacity-20 text-xs leading-none">▼</button>
+                    </div>
+                  </div>
+                </td>
+                <td><img src={p.image ? `/_next/image?url=${encodeURIComponent(p.image)}&w=96&q=60` : '/uploads/placeholder.svg'} className="w-12 h-12 object-cover rounded" alt="" loading="lazy" /></td>
                 <td className="font-mono text-gray-600">{p.model_code || '-'}</td>
                 <td className="font-medium">{p.name}</td>
                 <td className="text-gray-500">{cats.find(c => c.id === p.category_id)?.name || '-'}</td>

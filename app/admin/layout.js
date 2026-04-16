@@ -1,11 +1,12 @@
 import Link from 'next/link';
-import { getAdminSession } from '@/lib/auth';
+import { getAdminSession, getAdminToken } from '@/lib/auth';
 import { getCurrentAdminSite } from '@/lib/admin-db';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminLayout({ children }) {
   const admin = await getAdminSession();
+  const token = getAdminToken();
   const currentSite = getCurrentAdminSite();
   const isMachines = currentSite === 'machines';
   const targetSite = isMachines ? 'components' : 'machines';
@@ -35,7 +36,10 @@ export default async function AdminLayout({ children }) {
 
         {/* 跨站切換：正式環境直接跳轉到另一站後台 */}
         <a
-          href={isMachines ? 'https://parts.poshtech.com.tw/admin' : 'https://poshtech.com.tw/admin'}
+          href={isMachines
+            ? `https://parts.poshtech.com.tw/api/auth/sso?token=${token}&next=/admin`
+            : `https://poshtech.com.tw/api/auth/sso?token=${token}&next=/admin`
+          }
           className={`mx-3 mt-3 mb-1 w-auto flex items-center justify-between px-4 py-2.5 rounded border-2 border-dashed text-sm transition ${
             isMachines
               ? 'border-blue-600 text-blue-300 hover:bg-blue-900/30'
