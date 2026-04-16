@@ -44,21 +44,15 @@ export default async function Navbar() {
           {/* 公司名：手機/小螢幕隱藏；中型以上才顯示 */}
           <div className="hidden lg:block leading-tight min-w-0">
             <div className="text-brand font-bold text-xl xl:text-2xl tracking-wider truncate">
-              {isMachines
-                ? (locale === 'en' ? 'Jeouyang Machinery Co., Ltd.' : '久洋機械股份有限公司')
-                : (locale === 'en' ? 'Jeouyang Components' : '久洋機械零組件')}
+              {locale === 'en' ? 'Jeouyang Machinery Co., Ltd.' : '久洋機械股份有限公司'}
             </div>
             <div className="text-xs xl:text-sm text-gray-500 tracking-[0.25em] mt-0.5 truncate">
-              {isMachines
-                ? (locale === 'en' ? 'JEOUYANG MACHINERY · POSHTECH' : 'JEOUYANG MACHINERY')
-                : (locale === 'en' ? 'JEOUYANG COMPONENTS' : 'JEOUYANG COMPONENTS')}
+              {locale === 'en' ? 'JEOUYANG MACHINERY · POSHTECH' : 'JEOUYANG MACHINERY'}
             </div>
           </div>
           <div className="hidden md:block lg:hidden leading-tight min-w-0">
             <div className="text-brand font-bold text-base tracking-wider truncate">
-              {isMachines
-                ? (locale === 'en' ? 'Jeouyang' : '久洋機械')
-                : (locale === 'en' ? 'Jeouyang' : '久洋零組件')}
+              {locale === 'en' ? 'Jeouyang' : '久洋機械'}
             </div>
             <div className="text-[10px] text-gray-500 tracking-widest truncate">
               SINCE 1994
