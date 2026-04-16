@@ -14,6 +14,18 @@ poshtech.com.tw, www.poshtech.com.tw {
         header_up X-Forwarded-Proto {scheme}
     }
 
+    # 靜態資源快取（圖片、CSS、JS、字型）
+    @static path *.jpg *.jpeg *.png *.gif *.svg *.webp *.ico *.css *.js *.woff *.woff2
+    header @static Cache-Control "public, max-age=2592000, immutable"
+
+    # Next.js 靜態資源（已含 hash，可長期快取）
+    @nextStatic path /_next/static/*
+    header @nextStatic Cache-Control "public, max-age=31536000, immutable"
+
+    # 上傳的圖片快取 7 天
+    @uploads path /uploads/*
+    header @uploads Cache-Control "public, max-age=604800"
+
     # 加入安全性標頭
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -40,6 +52,16 @@ parts.poshtech.com.tw {
         header_up X-Forwarded-For {remote_host}
         header_up X-Forwarded-Proto {scheme}
     }
+
+    # 靜態資源快取
+    @static path *.jpg *.jpeg *.png *.gif *.svg *.webp *.ico *.css *.js *.woff *.woff2
+    header @static Cache-Control "public, max-age=2592000, immutable"
+
+    @nextStatic path /_next/static/*
+    header @nextStatic Cache-Control "public, max-age=31536000, immutable"
+
+    @uploads path /uploads/*
+    header @uploads Cache-Control "public, max-age=604800"
 
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
