@@ -14,6 +14,14 @@ export async function POST(req) {
   return NextResponse.json({ ok: true, id: r.lastInsertRowid });
 }
 
+export async function PUT(req) {
+  const id = Number(new URL(req.url).searchParams.get('id'));
+  const { name } = await req.json();
+  if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 });
+  getDB().prepare('UPDATE categories SET name=? WHERE id=?').run(name, id);
+  return NextResponse.json({ ok: true });
+}
+
 export async function DELETE(req) {
   const id = Number(new URL(req.url).searchParams.get('id'));
   getDB().prepare('DELETE FROM categories WHERE id=?').run(id);

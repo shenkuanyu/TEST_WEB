@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
+const RichTextEditor = lazy(() => import('@/components/RichTextEditor'));
 
 export default function AdminProducts() {
   const [list, setList] = useState([]);
@@ -21,12 +22,90 @@ export default function AdminProducts() {
     load();
   }
 
+  const [showCats, setShowCats] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
+  const [editingCat, setEditingCat] = useState(null);
+
+  async function addCat() {
+    if (!newCatName.trim()) return;
+    await fetch('/api/admin/categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newCatName.trim() }),
+    });
+    setNewCatName('');
+    load();
+  }
+  async function updateCat(id, name) {
+    await fetch(`/api/admin/categories?id=${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    setEditingCat(null);
+    load();
+  }
+  async function removeCat(id) {
+    const used = list.some(p => p.category_id === id);
+    if (used && !confirm('此分類下還有產品，確定刪除？（產品不會被刪除，只會變成無分類）')) return;
+    if (!used && !confirm('確定刪除此分類？')) return;
+    await fetch(`/api/admin/categories?id=${id}`, { method: 'DELETE' });
+    load();
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">產品管理</h1>
-        <button onClick={() => setEditing({})} className="btn-primary">+ 新增產品</button>
+        <div className="flex gap-3">
+          <button onClick={() => setShowCats(!showCats)} className="btn-outline">
+            {showCats ? '收起分類' : '管理分類'}
+          </button>
+          <button onClick={() => setEditing({})} className="btn-primary">+ 新增產品</button>
+        </div>
       </div>
+
+      {showCats && (
+        <div className="bg-white rounded-lg shadow-sm p-5 mb-6">
+          <h2 className="text-lg font-semibold mb-3">分類管理</h2>
+          <div className="space-y-2 mb-4">
+            {cats.map(c => (
+              <div key={c.id} className="flex items-center gap-3 p-2 border rounded hover:bg-gray-50">
+                {editingCat === c.id ? (
+                  <>
+                    <input
+                      defaultValue={c.name}
+                      className="input flex-1"
+                      autoFocus
+                      onKeyDown={e => { if (e.key === 'Enter') updateCat(c.id, e.target.value); if (e.key === 'Escape') setEditingCat(null); }}
+                    />
+                    <button onClick={e => updateCat(c.id, e.target.previousElementSibling.value)} className="text-green-600 hover:underline text-sm">儲存</button>
+                    <button onClick={() => setEditingCat(null)} className="text-gray-500 hover:underline text-sm">取消</button>
+                  </>
+                ) : (
+                  <>
+                    <span className="flex-1 font-medium">{c.name}</span>
+                    <span className="text-xs text-gray-400">{list.filter(p => p.category_id === c.id).length} 個產品</span>
+                    <button onClick={() => setEditingCat(c.id)} className="text-blue-600 hover:underline text-sm">改名</button>
+                    <button onClick={() => removeCat(c.id)} className="text-red-600 hover:underline text-sm">刪除</button>
+                  </>
+                )}
+              </div>
+            ))}
+            {!cats.length && <p className="text-gray-400 text-sm">尚無分類</p>}
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={newCatName}
+              onChange={e => setNewCatName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') addCat(); }}
+              className="input flex-1"
+              placeholder="新分類名稱，例：立式加工中心"
+            />
+            <button onClick={addCat} className="btn-primary">新增分類</button>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <table className="w-full text-sm">
@@ -238,21 +317,25 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
           {tab === 'intro' && (
             <div className="space-y-6">
               <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
-                此分頁完整管理前台「產品內頁」上顯示的介紹內容。支援 Markdown 語法，左邊欄位顯示在中文版網站、右邊顯示在英文版。
+                此分頁完整管理前台「產品內頁」上顯示的介紹內容。左邊欄位顯示在中文版網站、右邊顯示在英文版。可直接從 Word 複製貼上，格式會自動保留。
               </div>
 
               {/* 詳細描述 */}
               <div>
-                <label className="label font-semibold">📝 詳細描述（Markdown）</label>
-                <p className="text-xs text-gray-500 mb-2">產品整段介紹文字。支援 #標題、**粗體**、- 清單、| 表格 |、換行等。</p>
+                <label className="label font-semibold">📝 詳細描述</label>
+                <p className="text-xs text-gray-500 mb-2">產品整段介紹文字。支援粗體、標題、清單、表格等格式。可直接從 Word 複製貼上，格式會自動保留。</p>
                 <div className="grid md:grid-cols-2 gap-3">
                   <div>
                     <div className="text-xs text-brand font-medium mb-1">中文</div>
-                    <textarea rows={12} value={data.description || ''} onChange={e => update('description', e.target.value)} className="input font-mono text-sm" placeholder={'### 產品概述\n\n本機為...'} />
+                    <Suspense fallback={<div className="border rounded p-4 text-gray-400">載入編輯器...</div>}>
+                      <RichTextEditor value={data.description || ''} onChange={v => update('description', v)} rows={12} />
+                    </Suspense>
                   </div>
                   <div>
                     <div className="text-xs text-gray-700 font-medium mb-1">English</div>
-                    <textarea rows={12} value={data.description_en || ''} onChange={e => update('description_en', e.target.value)} className="input font-mono text-sm" placeholder={'### Overview\n\nThis machine...'} />
+                    <Suspense fallback={<div className="border rounded p-4 text-gray-400">Loading editor...</div>}>
+                      <RichTextEditor value={data.description_en || ''} onChange={v => update('description_en', v)} rows={12} />
+                    </Suspense>
                   </div>
                 </div>
               </div>
@@ -346,30 +429,22 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
           {tab === 'specs' && (
             <div className="space-y-5">
               <div>
-                <label className="label">規格（Markdown 格式）</label>
+                <label className="label">產品規格</label>
+                <p className="text-xs text-gray-500 mb-2">可使用工具列插入表格、標題、粗體等格式。支援直接從 Word 複製貼上。</p>
                 <div className="grid md:grid-cols-2 gap-3">
                   <div>
                     <div className="text-xs text-brand font-medium mb-1">中文</div>
-                    <textarea
-                      rows={12}
-                      value={data.specs_md || ''}
-                      onChange={e => update('specs_md', e.target.value)}
-                      className="input font-mono text-sm"
-                      placeholder={'### 主要規格\n| 項目 | 內容 |'}
-                    />
+                    <Suspense fallback={<div className="border rounded p-4 text-gray-400">載入編輯器...</div>}>
+                      <RichTextEditor value={data.specs_md || ''} onChange={v => update('specs_md', v)} rows={12} />
+                    </Suspense>
                   </div>
                   <div>
                     <div className="text-xs text-gray-700 font-medium mb-1">English</div>
-                    <textarea
-                      rows={12}
-                      value={data.specs_md_en || ''}
-                      onChange={e => update('specs_md_en', e.target.value)}
-                      className="input font-mono text-sm"
-                      placeholder={'### Main Specifications\n| Item | Detail |'}
-                    />
+                    <Suspense fallback={<div className="border rounded p-4 text-gray-400">Loading editor...</div>}>
+                      <RichTextEditor value={data.specs_md_en || ''} onChange={v => update('specs_md_en', v)} rows={12} />
+                    </Suspense>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">可使用 Markdown（標題 #、表格 | ---、粗體 **、條列 -）</p>
               </div>
               <div>
                 <label className="label">產品特色（每行一項）</label>
