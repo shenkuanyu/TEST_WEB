@@ -8,10 +8,22 @@
 # ── POSHTECH 機台站 ──
 poshtech.com.tw, www.poshtech.com.tw {
     encode gzip zstd
-    reverse_proxy machines-web:3000 {
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
+
+    # 上傳的圖片：Caddy 直接從 volume 提供（不經過 Next.js）
+    handle /uploads/* {
+        root * /srv/uploads/machines
+        uri strip_prefix /uploads
+        file_server
+        header Cache-Control "public, max-age=604800"
+    }
+
+    # 其餘請求轉給 Next.js
+    handle {
+        reverse_proxy machines-web:3000 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
     }
 
     # 靜態資源快取（圖片、CSS、JS、字型）
@@ -21,10 +33,6 @@ poshtech.com.tw, www.poshtech.com.tw {
     # Next.js 靜態資源（已含 hash，可長期快取）
     @nextStatic path /_next/static/*
     header @nextStatic Cache-Control "public, max-age=31536000, immutable"
-
-    # 上傳的圖片快取 7 天
-    @uploads path /uploads/*
-    header @uploads Cache-Control "public, max-age=604800"
 
     # 加入安全性標頭
     header {
@@ -47,10 +55,22 @@ poshtech.com.tw, www.poshtech.com.tw {
 # ── 零組件站 ──
 parts.poshtech.com.tw {
     encode gzip zstd
-    reverse_proxy components-web:3000 {
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
+
+    # 上傳的圖片：Caddy 直接從 volume 提供
+    handle /uploads/* {
+        root * /srv/uploads/components
+        uri strip_prefix /uploads
+        file_server
+        header Cache-Control "public, max-age=604800"
+    }
+
+    # 其餘請求轉給 Next.js
+    handle {
+        reverse_proxy components-web:3000 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
     }
 
     # 靜態資源快取
@@ -59,9 +79,6 @@ parts.poshtech.com.tw {
 
     @nextStatic path /_next/static/*
     header @nextStatic Cache-Control "public, max-age=31536000, immutable"
-
-    @uploads path /uploads/*
-    header @uploads Cache-Control "public, max-age=604800"
 
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains"

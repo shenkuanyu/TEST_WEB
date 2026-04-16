@@ -96,6 +96,8 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ../../logs/caddy:/var/log/caddy
+      - ../../uploads/machines:/srv/uploads/machines:ro
+      - ../../uploads/components:/srv/uploads/components:ro
     networks:
       - webnet
     depends_on:
