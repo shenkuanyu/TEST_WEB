@@ -95,6 +95,29 @@ export default function ContactPage() {
           </form>
         </div>
       </section>
+
+      {/* Google 地圖 */}
+      <section className="bg-gray-50">
+        <div className="container py-12">
+          <p className="section-sub mb-2 text-center">LOCATION</p>
+          <h2 className="section-title text-center mb-8">交通位置</h2>
+          <div className="rounded-lg overflow-hidden shadow-sm" style={{ height: 400 }}>
+            <iframe
+              src="https://www.google.com/maps?q=%E5%8F%B0%E4%B8%AD%E5%B8%82%E6%BD%AD%E5%AD%90%E5%8D%80%E6%B0%91%E7%94%9F%E8%A1%97197%E8%99%9F&z=16&output=embed&hl=zh-TW"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="久洋機械位置"
+            />
+          </div>
+          <p className="text-sm text-gray-500 mt-3 text-center">
+            台中市潭子區栗林里民生街197號（近潭子交流道）
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
