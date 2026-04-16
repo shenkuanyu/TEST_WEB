@@ -1,0 +1,65 @@
+# ========================================================
+#  Caddy 反向代理設定 — 自動處理 HTTPS (Let's Encrypt)
+# ========================================================
+#  Caddy 會自動申請 / 續約 SSL 憑證，零設定。
+#  以下四個 Host 對應到兩個容器。
+# --------------------------------------------------------
+
+# ── POSHTECH 機台站 ──
+poshtech.com.tw, www.poshtech.com.tw {
+    encode gzip zstd
+    reverse_proxy machines-web:3000 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    # 加入安全性標頭
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        # 清掉 Server 版本資訊
+        -Server
+    }
+
+    log {
+        output file /var/log/caddy/machines-access.log {
+            roll_size 50mb
+            roll_keep 10
+        }
+    }
+}
+
+# ── 零組件站 ──
+parts.poshtech.com.tw {
+    encode gzip zstd
+    reverse_proxy components-web:3000 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    log {
+        output file /var/log/caddy/parts-access.log {
+            roll_size 50mb
+            roll_keep 10
+        }
+    }
+}
+
+# ── 健康檢查頁面（選用） ──
+# 可用於監控：http://VPS_IP/health
+:80 {
+    @health path /__health
+    respond @health "OK" 200
+}

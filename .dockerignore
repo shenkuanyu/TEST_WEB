@@ -1,0 +1,24 @@
+node_modules
+.next
+.git
+.env
+.env.local
+.env.*.local
+data
+*.log
+.DS_Store
+
+# 開發用的網站範本檔案（不需要進映像檔）
+久洋機械股份有限公司.html
+久洋機械股份有限公司_files
+大立機器工業股份有限公司.html
+大立機器工業股份有限公司_files
+Control Panel.html
+Control Panel_files
+圖片
+聯絡人清單.xlsx
+
+# 備份 / 備忘
+*.bak
+*.backup
+README.md

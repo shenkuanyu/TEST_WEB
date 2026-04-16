@@ -1,0 +1,50 @@
+POSHTECH                                     POSHTECH
+
+NVM1010-5A                                     Model                            NVM1010-5A
+                                             Table
+                                             Table Size (X/Y)mm                  1350×1100
+                                             Max workpiece mm                   1000x1000x700
+                                             Cylinder workpiece mm             Dia 630,High700
+                                             Table Load kg                               1000
+                                             Travel
+                                             X Travel             (X) mm               1200
+                                             Y Travel             (Y) mm               1100
+                                             Z Travel          (Z) mm                  650
+                                             A Axis                                  90 , -120
+                                             C Axis Table               mm     Dia     550mm
+                                             Spindle nose to Table      mm            200-850
+Standard：
+                                             Column Distance          mm                 1250
+＊Spindle Speed 15000rpm,Power 18.5Kw         Spindle
+＊ XYZ Linear Way: German Rexroth.            Spindle                          Built-in     HSK63A
+＊ Splash coolant Sheet metal                 Spindle Speed ( STD )      rpm            15000
+＊ Spindle coolant                            Spindle Lube                              Grease
+＊ Spindle Air below                          Spindle Coolant                   Oil       6000 Kcal
+＊ Chip flow on Base                          Feed
+＊ Chip screw on Base                         Rapid Rate              M/min           36/36/36
+＊ Chip conveyor                              Min Feed                 mm               0.001
+＊ Lubrication                                ATC
+＊ Alarm & work lamp
+                                             Tool Type                               HSK63A
+＊ Spindle coolant System
+                                             Tool capacity              pcs       60 Arm Type
+＊ XYZ Special Ballscrew
+                                             Max Tool Diameter        mm                 80
+Option ：                                     Max Tool Length          mm                 300
+                                             Max Tool Weight            kg                7
+＊ CTS : 20 Bar 600L
+                                             Tool Change Time                            2.5 sec
+＊ XYZ Axis Linear Scale
+                                             Servo Motor
+＊ AC Axis Encoder
+                                             Spindle motor              Kw               18.5
+＊ Auto Tool Length Measurement
+＊ Auto Workpiece Measurement                 X Servo motor            Kw               5.0
+＊ ArmType Magazine                           Y Servo motor            Kw               5.0
+
+Jeou Yang Machinery Co.,LTD                  Z Servo motor            Kw                 5.0+B
+No197,Min-Sheng St,Tan-Tzu,Taichung,Taiwan   Machine Weight & Dimension
+TEL：＋886-4-2537-0971                         Machine Dimension          mm     4200×3200x4000
+FAX：＋886-4-2537-0984                         Machine Weight            kg           9500
+E-mail：poshtech@ms36.hinet.net               ＊Specification is subject to be changed without notice.
+

@@ -1,0 +1,19 @@
+  Model    JL-400
+  Table Size (X/Y)      mm           770x300      Magazine type                Armless
+ T-Slot(WidthxDistancexNum)          18x75x3      Tool Type                   BT30/BT40
+ Table Load          (Kgs)             150        Magazine capacity     pcs       10
+ X/Y/Z Travel                mm     400/300/400   Maximum Diameter      mm        75
+  Spindle nose to Table mm           100-500      Maximum Length        mm        150
+ Spindle center to column mm           350        Maximum weight        mm         5
+  Spindle Tap                        BT30/BT40    X/ Y/ Z Servo motor   Kw    0.75/0.5/0.5
+  Spindle Speed               rpm   10000 rpm     Lubricating motor            105 / 125
+ Spindle motor power          Hp        5         Coolant Pump                  1/4 HP
+  Feed (X/Y/Z) M/min                 10 M/min     Machine Weght          kg      1150
+ Minimum moving                       0.001       Covered area          mm    1200X1800
+
+
+JeouYang Machinery CO.,LTD
+No.197,Min-Sheng St.,Tan-Tzu,Taichung,Taiwan          E-mail：poshtech@ms36.hinet.net
+Tel：+886-4-2537-0971
+Fax：+886-4-2537-0984                                    Web : www.jeouyang.com.tw
+

@@ -1,0 +1,48 @@
+POSHTECH
+VERTICAL MACHINING CENTER
+                                                  KMC1600 / KMC2200
+
+
+
+
+Standard Accessories：                Specifications
+＊Massive iron construction
+                                     Model                            KMC1600       KMC2200
+＊ 10000rpm Spindle speed
+                                                                 Table
+＊ Direct-coupled servo motors
+                                     Table size (X/Y) mm                1800x650 2500×650
+＊ Full splash safety guard           T-slot (size＊number)                     18×100×5
+＊ Air cooling system                 Max. Table loading       kg            2000      3000
+＊ Spindle air blast (Taper)                                      Travel
+＊ Spindle air blower                 Longitudinal travel (X) mm             1600      2200
+＊ Auto lubrication system            Cross travel       (Y) mm                   510
+＊ Cycle end alarm light              Headstock travel (Z) mm                     510
+＊ Halogen work lamp                  Spindle nose to table surface             200-710
+＊ Leveling blots and pads            Spindle Center to Column                    545
+                                                                Spindle
+＊ Toolkit box
+                                     Spindle taper                              ISO 40
+＊ Operation＆Maintenance Manual
+                                     Spindle speed (standard) rpm               10000
+                                                                   Feed
+Optional Accessories：                Rapid travel          M/min        24/24/20      24/24/20
+＊ 12000/15000rpm Spindle speed       Min. input increment mm                     0.001
+＊ Coolant Through Spindle                                           ATC
+＊ Pump 20 Bar.,20 L/min, 600L Tank   Tool holder                          BT40, CAT40, SK40
+                                     Tool storage capacity pcs               32 Arm Type
+＊ Oil cooler for spindle
+                                     Max. Tool diameter      mm                    70
+＊ Chip conveyor
+                                     Max. Tool length        mm                   250
+＊ CNC rotary table
+                                     Max. Tool weight        kg                    7
+＊ Auto tool length measurement       Tool change time                           3.5 sec
+                                                                  Motor
+JEOU YANG MACHINERY CO.,LTD.         Spindle motor            Kw                11 / 15
+NO.197,MIN-SHENG ST.,TAN-TZU         X/Y/Z servo motor        Kw              4.5/4.5/2.8
+TAICHUNG,TAIWAN ,ROC.                                Machine weight and space
+TEL：＋886-4-2537-0971                 Floor space             mm         3800 (4600)×3000x2600
+FAX：＋886-4-2537-0984                 Net weight               kg         10000          13000
+E-mail：poshtech@ms36.hinet.net       ＊Specification is subject to be changed without notice
+

@@ -1,0 +1,111 @@
+# =============================================================
+#  POSHTECH 雙站部署 (production)
+#
+#  服務：
+#    caddy           對外 80/443，自動 HTTPS
+#    machines-web    機台站 (SITE_CODE=machines)
+#    components-web  零組件站 (SITE_CODE=components)
+#
+#  DNS 設定：
+#    poshtech.com.tw        A   <VPS IP>
+#    www.poshtech.com.tw    A   <VPS IP>
+#    parts.poshtech.com.tw  A   <VPS IP>
+#
+#  執行目錄結構：
+#    /opt/poshtech/
+#     ├── web/             ← git clone 下來的原始碼
+#     ├── data/
+#     │    ├── machines/   ← machines.db 持久化
+#     │    └── components/ ← components.db 持久化
+#     ├── uploads/
+#     │    ├── machines/   ← 機台上傳圖片持久化
+#     │    └── components/
+#     └── deploy/
+#          ├── Caddyfile
+#          ├── docker-compose.prod.yml
+#          └── ...
+# =============================================================
+
+services:
+  # ── 機台站 ──
+  machines-web:
+    build:
+      context: ..              # 指向 web/ 的上層（repo root）
+      dockerfile: Dockerfile   # Dockerfile 在 repo root
+    image: poshtech-web:latest
+    container_name: poshtech-machines
+    restart: unless-stopped
+    env_file:
+      - ./.env.production
+    environment:
+      SITE_CODE: machines
+      DATABASE_PATH: /app/data/app.db
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    volumes:
+      - ../../data/machines:/app/data
+      - ../../uploads/machines:/app/public/uploads
+    networks:
+      - webnet
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/", "-O", "/dev/null"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── 零組件站 ──
+  components-web:
+    # 與 machines-web 同一個映像檔（共用程式碼）
+    image: poshtech-web:latest
+    container_name: poshtech-components
+    restart: unless-stopped
+    depends_on:
+      - machines-web
+    env_file:
+      - ./.env.production
+    environment:
+      SITE_CODE: components
+      DATABASE_PATH: /app/data/app.db
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    volumes:
+      - ../../data/components:/app/data
+      - ../../uploads/components:/app/public/uploads
+    networks:
+      - webnet
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/", "-O", "/dev/null"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Caddy 反向代理 + 自動 HTTPS ──
+  caddy:
+    image: caddy:2-alpine
+    container_name: poshtech-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - ../../logs/caddy:/var/log/caddy
+    networks:
+      - webnet
+    depends_on:
+      - machines-web
+      - components-web
+
+networks:
+  webnet:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

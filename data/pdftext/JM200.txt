@@ -1,0 +1,20 @@
+POSHTECH
+      High Speed Engraving Machine
+
+
+
+
+Model：JM200
+  Table Size         :   210x190 mm
+  Travel : X Axis    :      200 mm        Rapid feed : 10 / 10 / 10 M/min
+           Y Axis   :      160 mm         Cutting Feed : 5000 mm/min
+           Z Axis   :      120 mm
+  Spindle speed      :    24000 rpm (STD)
+  Spindle power     :      1.0 Kw
+
+
+ JEOU YANG MACHINERY CO.,LTD.
+ NO.197,MIN-SHENG ST.,TAN-TZU
+ TAICHUNG,TAIWAN ,ROC.
+ TEL：+886-4-2537-0971  FAX：+886-4-2537-0984   E-mail：poshtech@ms36.hinet.net
+

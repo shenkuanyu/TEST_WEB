@@ -1,0 +1,48 @@
+POSHTECH                              POSHTECH
+
+NV1512                                Model                             NV1512
+                                      Table
+                                      Table size (X/Y) mm                2000×1100
+                                      T-slot (size＊number)              1500x1100x650
+                                      Max. Table loading        kg            2000
+                                      Travel
+                                      Longitudinal travel (X) mm             1500
+                                      Cross travel         (Y) mm            1200
+                                      Headstock travel   (Z) mm              650
+                                      Spindle nose to table surface         200-850
+                                      Spindle Center to Column                1250
+                                      Spindle
+Standard Accessories：
+                                      Spindle taper                           BT40
+＊Massive iron construction            Spindle speed (standard) rpm           8,000
+＊ 8000rpm Spindle Speed               Spindle Cooling                          air
+＊ Direct-coupled servo motors         Feed
+＊ Full splash safety guard            Rapid travel            M/min       30/30/30
+＊ Air cooling system                  Min. input increment     mm            0.001
+＊ Spindle air blast (Taper)           ATC
+＊ Spindle air blower                  Tool holder                            BT40
+＊ Auto lubrication system             Tool storage capacity     pcs      40 std /60 opt
+＊ Cycle end alarm light               Max. Tool diameter       mm              80
+＊ Halogen work lamp                   Max. Tool length         mm             300
+＊ Leveling blots and pads
+                                      Max. Tool weight          kg             7
+＊ Toolkit box
+                                      Tool change time                        2.5 sec
+＊ Operation＆Maintenance Manual
+                                      Motor
+Optional Accessories：                 Spindle motor             Kw           11/15
+                                      X servo motor             Kw           A22
+＊ 18000/DD Spindle speed
+                                      Y servo motor             Kw           A22
+＊ Oil cooler for spindle
+                                      Z servo motor             Kw           A22B
+＊ CNC Rotary Table
+                                      Machine weight and space
+＊ Auto Tool Length Measurement
+E-mail：JEOU YANG MACHINERY CO.,LTD.   Floor space               mm     4800×3000x3700
+NO.197,MIN-SHENG ST.,TAN-TZU          Net weight                kg            9500
+TAICHUNG,TAIWAN ,ROC.                 ＊Specification is subject to be changed without notice.
+TEL：＋886-4-2537-0971
+FAX：＋886-4-2537-0984
+E-mail：poshtech@ms36.hinet.net
+

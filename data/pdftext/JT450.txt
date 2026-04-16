@@ -1,0 +1,54 @@
+                                    Poshtech        JM450
+                                    Model                            JM450                 JM450S
+                                    Table
+                                    Table size (X/Y) mm                          550×350
+                                    T-slot (size＊number)                      14×100×3
+                                    Max. Table loading         kg                  150
+                                    Travel
+                                    Longitudinal travel (X) mm                     450
+Standard Accessories：               Cross travel (Y)        mm                     300
+                                    Headstock travel (Z)     mm                    350
+＊Massive cast-iron construction
+                                    Distance of spindle nose
+＊ 8000rpm spindle speed
+                                    To table surface         mm                  80-430
+＊ Direct-coupled servo motors
+                                    Distance of spindle
+＊ Full splash safety guard
+                                    Center to Z axis cover mm                      325
+＊ Air cooling system
+                                    Spindle
+＊ Spindle air blast (Taper)
+                                    Spindle taper                                ISO 30
+＊ Spindle air blower
+                                    Spindle speed (standard) rpm                  8000
+＊ Auto lubrication system
+                                    Feed
+＊ Cycle end alarm light
+                                    Rapid travel            M/min     32/32/32               20/20/20
+＊ Halogen work lamp
+                                    Min. input increment     mm                   0.001
+＊ Leveling blots and pads
+                                    ATC
+＊ Toolkit box
+＊ Operation＆Maintenance Manual      Tool holder                                  ISO30
+                                    Tool storage capacity     pcs            10 Armless
+                                    Max. Tool diameter       mm                     63
+Optional Accessories：               Max. Tool length         mm                    150
+＊ 12000/30000rpm spindle speed      Max. Tool weight          kg                      3
+＊ Coolant Through Spindle           Tool change time                              6 sec
+＊ Pump 4 Bar.,20 L/min, 150L Tank   Motor
+＊ Oil cooler for spindle            Spindle motor             Kw          2.2 / 3.7       3.7/5.5
+＊ Chip conveyor                     X servo motor             Kw                 0.5 / 0.6
+＊ Auto Pallet Changer               Y servo motor             Kw                 0.5 / 0.6
+＊ CNC rotary table                  Z servo motor             Kw                 0.6 / 1.0
+＊ Auto tool length measurement      Lub. Motor                W                  105/125
+＊20 tools Arm-type ATC (1.5sec)     Coolant pump              HP            1/4hp         1/2hp
+                                    Machine weight and space
+JEOU YANG MACHINERY CO.,LTD.        Floor space               mm              1690×2085
+NO.197,MIN-SHENG ST.,TAN-TZU        Net weight                kg                 1750
+TAICHUNG,TAIWAN ,ROC.               ＊Specification is subject to be changed without notice
+TEL：＋886-4-2537-0971
+FAX：＋886-4-2537-0984
+E-mail：poshtech@ms36.hinet.net               www.poshtech.com.tw
+

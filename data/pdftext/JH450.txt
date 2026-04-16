@@ -1,0 +1,61 @@
+POSHTECH
+HORIZONTAL MACHINING CENTER
+                                                         JH450
+
+Standard Accessories：
+＊ Massive iron construction
+＊ 12000 rpm Spindle speed
+＊ Direct-coupled servo motors
+＊ Full splash safety guard
+＊ Air cooling system
+＊ Spindle air blast (Taper)
+＊ Spindle air blower
+＊ Auto lubrication system
+＊ Cycle end alarm light
+＊ Halogen work lamp
+＊ Leveling blots and pads
+＊ Toolkit box
+＊ Operation＆Maintenance Manual
+
+
+
+
+Optional Accessories：
+＊ 15000 rpm Spindle speed               Specifications
+＊ 24000 rpm ISO30
+                                        Model   JH450
+＊ Coolant Through Spindle                                           Table
+ Pump 4 Bar.,20 L/min, 150L Tank        Table size (X/Y) mm                  500x350
+＊ Oil chiller for spindle               T-slot (size＊number)                   14x100x3
+＊ Chip auger                            Max. Table loading     kg              150Kg
+＊ Auto Pallet Changer                                               Travel
+＊ CNC Rotary table (4 Axis or 5 Axis)   Longitudinal travel (X) mm               450
+＊ Auto tool length measurement          Cross travel       (Y) mm                350
+＊ 20 tool Arm-type ATC (1.5 sec)        Headstock travel (Z) mm                  350
+                                        Spindle nose to table Center             510
+  (30 TAPER ONLY)
+                                        Spindle Center to Table surface        100 – 450
+＊ ISO 40 Taper ATC-10 Umbrella type
+                                                                   Spindle
+＊ Column height 100mm and 150mm         Spindle taper                            ISO 30
+                                        Spindle speed (standard) rpm             12000
+                                                                     Feed
+                                        Rapid travel          M/min              24/24/24
+                                        Min. input increment mm                    0.001
+                                                                     ATC
+                                        Tool holder                          BT30, SK30, CAT30
+JEOU YANG MACHINERY CO.,LTD.            Tool storage capacity pcs                10 Armless
+                                        Max. Tool diameter      mm                   63
+NO.197,MIN-SHENG ST.,TAN-TZU
+                                        Max. Tool length        mm                  150
+TAICHUNG,TAIWAN ,ROC.
+                                        Max. Tool weight        kg                    3
+TEL：＋886-4-2537-0971                    Tool change time                            6 sec
+FAX：＋886-4-2537-0984                                                Motor
+E-mail：poshtech@ms36.hinet.net          Spindle motor            Kw               7.5 HP
+Web: www.poshtech.com.tw                X/Y/Z servo motor        Kw            1.0/1.0/1.0
+                                                        Machine weight and space
+                                        Floor space             mm           1690x2085x2070
+                                        Net weight               kg              2100
+                                        ＊Specification is subject to be changed without notice
+

@@ -1,0 +1,50 @@
+                                 Poshtech JC400 / JC600
+                                 Model                           JC400           JC600
+                                 Table
+                                 Table size (X/Y) mm             450x450 450x600
+                                 T-slot (size＊number)                 8×100×5
+                                 Max. Table loading        kg               20
+                                 Travel
+                                 Longitudinal travel (X) mm              400
+                                 Cross travel         (Y) mm       400              600
+                                 Headstock travel   (Z) mm               150
+                                 Spindle nose to table surface           30-180
+                                 Spindle Center to Column                    50
+                                 Spindle
+                                 Spindle taper                           ER16
+Standard Accessories：
+                                 Spindle speed (standard) rpm            24000
+＊Massive iron construction       Feed
+＊ 24000rpm Spindle Speed         Rapid travel            M/min   15/15/15         15/15/15
+＊ Direct-coupled servo motors    Min. input increment     mm             0.001
+＊ Full splash safety guard       ATC
+＊ Air cooling system             Tool holder                             ER16
+＊ Spindle air blast (Taper)      Tool storage capacity     pcs           no
+＊ Spindle air blower             Max. Tool diameter       mm             13
+＊ Auto lubrication system        Max. Tool length         mm             30
+＊ Cycle end alarm light          Max. Tool weight          kg            0.5
+＊ Halogen work lamp              Tool change time                        no
+＊ Leveling blots and pads
+                                 Motor
+＊ Toolkit box
+                                 Spindle motor             Kw            1.0
+＊ Operation＆Maintenance Manual
+                                 X servo motor             Kw            0.4
+Optional Accessories：            Y servo motor             Kw            0.4
+                                 Z servo motor             Kw            0.4 B
+＊ 60000 rpm Spindle speed
+                                 Machine weight and space
+＊ Oil cooler for spindle
+                                 Floor space               mm    700×1200        700×1500
+＊ CNC rotary table
+                                 Net weight                kg      370         490
+＊ Auto Tool Length Measurement
+                                 ＊Specification is subject to be changed without notice
+
+JEOU YANG MACHINERY CO.,LTD.
+NO.197,MIN-SHENG ST.,TAN-TZU
+TAICHUNG,TAIWAN ,ROC.
+TEL：＋886-4-2537-0971
+FAX：＋886-4-2537-0984
+E-mail：poshtech@ms36.hinet.net
+

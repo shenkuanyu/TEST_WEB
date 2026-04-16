@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+.next
+.pnpm-debug.log
+
+# Environment files（絕對不能進 git）
+.env
+.env.local
+.env.production
+.env.*.local
+
+# 資料庫與上傳檔（VPS 上獨立存在 /opt/poshtech/data & uploads）
+data/*.db
+data/*.db-shm
+data/*.db-wal
+public/uploads/*
+!public/uploads/.gitkeep
+!public/uploads/logo.*
+!public/uploads/placeholder.*
+!public/uploads/banner-*.svg
+!public/uploads/about.jpg
+!public/uploads/contact-*.jpg
+!public/uploads/cat-*.jpg
+!public/uploads/prod-*.jpg
+
+# 不 commit 預抽取的 pdftext（檔案大、可重建）
+# 若需要部署時含有，請拿掉下面這一行註解
+# data/pdftext/
+
+# 編輯器/作業系統
+.DS_Store
+.vscode/*.log
+*.swp
+*~
+
+# Logs
+logs/
+*.log

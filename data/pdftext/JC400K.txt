@@ -1,0 +1,20 @@
+POSHTECH
+      High Speed Engraving Machine
+
+
+
+
+Model：JC400E
+  Table Size         :    450x450 mm
+  Travel : X Axis    :       400 mm         Rapid feed : 20 / 20 / 20 M/min
+           Y Axis   :       400 mm          Cutting Feed : 5000 mm/min
+           Z Axis   :      80 -110mm    150mm ( option )
+  Spindle speed      :     24000 rpm (STD) 36000 rpm (OPT)
+  Spindle power     :       1.0 Kw
+
+
+ JEOU YANG MACHINERY CO.,LTD.
+  NO.197,MIN-SHENG ST.,TAN-TZU
+  TAICHUNG,TAIWAN ,ROC.
+  TEL：+886-4-2537-0971  FAX：+886-4-2537-0984   E-mail：poshtech@ms36.hinet.net
+

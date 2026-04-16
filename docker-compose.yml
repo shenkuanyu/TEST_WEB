@@ -1,0 +1,54 @@
+version: "3.9"
+
+# =============================================================
+#  久洋機械網站 — Docker Compose 設定
+#
+#  服務一覽：
+#    web   : Next.js App（port 3000，對內）
+#    nginx : 反向代理 + SSL，對外提供 80 / 443
+#
+#  持久化 volume：
+#    ./data           → /app/data          SQLite 資料庫
+#    ./public/uploads → /app/public/uploads 使用者上傳圖檔
+#    ./nginx/conf.d   → /etc/nginx/conf.d   Nginx 站點設定
+#    ./nginx/certs    → /etc/nginx/certs    Let's Encrypt 憑證
+#    ./nginx/logs     → /var/log/nginx      Nginx 存取 / 錯誤日誌
+# =============================================================
+
+services:
+  web:
+    build: .
+    image: jeouyang-web:latest
+    container_name: jeouyang-web
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    volumes:
+      - ./data:/app/data
+      - ./public/uploads:/app/public/uploads
+    networks:
+      - webnet
+    # 沒有對外 port，只讓 nginx 透過 webnet 內網連線
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: jeouyang-nginx
+    restart: unless-stopped
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./nginx/logs:/var/log/nginx
+      - ./public:/var/www/public:ro        # 直接從 nginx 送靜態檔（選用）
+    networks:
+      - webnet
+
+networks:
+  webnet:
+    driver: bridge

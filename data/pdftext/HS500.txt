@@ -1,0 +1,48 @@
+POSHTECH
+HORIZONTAL MACHINING CENTER
+                                                 HS500
+
+
+
+
+Standard Accessories：               Specifications
+＊Massive iron construction
+                                    Model    HS500
+＊ 10000rpm Spindle speed
+                                                                Table
+＊ Direct-coupled servo motors
+                                    Table size (X/Y) mm                   500x500
+＊ Full splash safety guard          T-slot (size＊number)                   M16x50x50
+＊ Air cooling system                Max. Table loading     kg               500Kg
+＊ Spindle air blast (Taper)                                     Travel
+＊ Spindle air blower                Longitudinal travel (X) mm               685
+＊ Auto lubrication system           Cross travel       (Y) mm                510
+＊ Cycle end alarm light             Headstock travel (Z) mm                  510
+＊ Halogen work lamp                 Spindle nose to table Center             510
+＊ Leveling blots and pads           Spindle Center to Table surface        0 - 510
+                                                               Spindle
+＊ Toolkit box
+                                    Spindle taper                            ISO 40
+＊ Operation＆Maintenance Manual
+                                    Spindle speed (standard) rpm             10000
+＊ Oil cooler for spindle                                         Feed
+＊ Chip conveyor                     Rapid travel          M/min            30          48
+                                    Min. input increment mm                     0.001
+Optional Accessories：                                            ATC
+＊ 15000rpm Spindle speed            Tool holder                                 ISO40
+                                    Tool storage capacity pcs               40 Arm Type
+＊ Coolant Through Spindle
+                                    Max. Tool diameter      mm                    70
+ Pump 20 Bar.,20 L/min, 600L Tank
+                                    Max. Tool length        mm                   250
+＊ Auto tool length measurement
+                                    Max. Tool weight        kg                    7
+                                    Tool change time                           3.5 sec
+JEOU YANG MACHINERY CO.,LTD.                                    Motor
+NO.197,MIN-SHENG ST.,TAN-TZU        Spindle motor            Kw              18.5
+TAICHUNG,TAIWAN ,ROC.               X/Y/Z servo motor        Kw            2.1/2.1/3.0
+TEL：＋886-4-2537-0971                                Machine weight and space
+FAX：＋886-4-2537-0984                Floor space             mm           2050x4000x2800
+E-mail：poshtech@ms36.hinet.net      Net weight               kg              7000
+www.poshtech.com.tw                 ＊Specification is subject to be changed without notice
+
