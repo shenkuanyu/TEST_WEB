@@ -16,6 +16,13 @@ export async function generateMetadata() {
     title,
     description,
     keywords: site.seo_keywords,
+    icons: {
+      icon: [
+        { url: '/favicon.ico', sizes: '16x16 32x32 48x48' },
+        { url: '/icon-32.png', sizes: '32x32', type: 'image/png' },
+      ],
+      apple: '/apple-icon.png',
+    },
     alternates: {
       // 告訴 Google 本頁有兩種語言版本，使用者依 locale cookie 切換
       languages: {
