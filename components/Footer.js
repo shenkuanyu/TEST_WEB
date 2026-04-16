@@ -25,9 +25,6 @@ export default function Footer() {
     info: 'Contact Info',
     addressLabel: 'Address',
     hoursLabel: 'Hours',
-    login: 'Sign In',
-    register: 'Sign Up',
-    admin: 'Admin',
   } : {
     nav: '網站導覽',
     home: '首頁',
@@ -38,9 +35,6 @@ export default function Footer() {
     info: '聯絡資訊',
     addressLabel: '地址',
     hoursLabel: '營業時間',
-    login: '會員登入',
-    register: '加入會員',
-    admin: '後台入口',
   };
 
   const socials = [
@@ -92,11 +86,6 @@ export default function Footer() {
             {s.contact_fax && <p>FAX：{s.contact_fax}</p>}
             <p>E-mail：<a href={`mailto:${s.contact_email}`} className="hover:text-white">{s.contact_email}</a></p>
             {hours && <p>{L.hoursLabel}：{hours}</p>}
-          </div>
-          <div className="mt-5 text-xs">
-            <Link href="/login" className="text-gray-500 hover:text-white mr-4">{L.login}</Link>
-            <Link href="/register" className="text-gray-500 hover:text-white mr-4">{L.register}</Link>
-            <Link href="/admin/login" className="text-gray-600 hover:text-white">{L.admin}</Link>
           </div>
         </div>
       </div>

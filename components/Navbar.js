@@ -37,22 +37,28 @@ export default async function Navbar() {
         {/* ===== 左：LOGO ===== */}
         <Link href="/" className="flex items-center gap-2 md:gap-4 shrink-0 min-w-0">
           <img
-            src="/uploads/logo.png"
-            alt="久洋機械"
+            src={isMachines ? '/uploads/logo.png' : '/uploads/jeouyang-logo-w.png'}
+            alt={isMachines ? '久洋機械 POSHTECH' : '久洋零組件 JEOUYANG'}
             className="h-8 md:h-14 w-auto object-contain shrink-0"
           />
           {/* 公司名：手機/小螢幕隱藏；中型以上才顯示 */}
           <div className="hidden lg:block leading-tight min-w-0">
             <div className="text-brand font-bold text-xl xl:text-2xl tracking-wider truncate">
-              {locale === 'en' ? 'Jeouyang Machinery Co., Ltd.' : '久洋機械股份有限公司'}
+              {isMachines
+                ? (locale === 'en' ? 'Jeouyang Machinery Co., Ltd.' : '久洋機械股份有限公司')
+                : (locale === 'en' ? 'Jeouyang Components' : '久洋機械零組件')}
             </div>
             <div className="text-xs xl:text-sm text-gray-500 tracking-[0.25em] mt-0.5 truncate">
-              {locale === 'en' ? 'JEOUYANG MACHINERY · POSHTECH' : 'JEOUYANG MACHINERY'}
+              {isMachines
+                ? (locale === 'en' ? 'JEOUYANG MACHINERY · POSHTECH' : 'JEOUYANG MACHINERY')
+                : (locale === 'en' ? 'JEOUYANG COMPONENTS' : 'JEOUYANG COMPONENTS')}
             </div>
           </div>
           <div className="hidden md:block lg:hidden leading-tight min-w-0">
             <div className="text-brand font-bold text-base tracking-wider truncate">
-              {locale === 'en' ? 'Jeouyang' : '久洋機械'}
+              {isMachines
+                ? (locale === 'en' ? 'Jeouyang' : '久洋機械')
+                : (locale === 'en' ? 'Jeouyang' : '久洋零組件')}
             </div>
             <div className="text-[10px] text-gray-500 tracking-widest truncate">
               SINCE 1994
