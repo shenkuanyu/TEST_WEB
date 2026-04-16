@@ -33,24 +33,20 @@ export default async function AdminLayout({ children }) {
           <div className="text-sm text-gray-400 mt-1">{admin.email}</div>
         </div>
 
-        {/* 同站切換器：form POST → 設 cookie → 重新載入 */}
-        <form action="/api/admin/switch-site" method="POST" className="mx-3 mt-3 mb-1">
-          <input type="hidden" name="site" value={targetSite} />
-          <input type="hidden" name="next" value="/admin" />
-          <button
-            type="submit"
-            className={`w-full flex items-center justify-between px-4 py-2.5 rounded border-2 border-dashed text-sm transition ${
-              isMachines
-                ? 'border-blue-600 text-blue-300 hover:bg-blue-900/30'
-                : 'border-brand text-red-300 hover:bg-red-900/30'
-            }`}
-          >
-            <span>切換到{isMachines ? '零組件' : '機台'}後台</span>
-            <span>⇄</span>
-          </button>
-        </form>
+        {/* 跨站切換：正式環境直接跳轉到另一站後台 */}
+        <a
+          href={isMachines ? 'https://parts.poshtech.com.tw/admin' : 'https://poshtech.com.tw/admin'}
+          className={`mx-3 mt-3 mb-1 w-auto flex items-center justify-between px-4 py-2.5 rounded border-2 border-dashed text-sm transition ${
+            isMachines
+              ? 'border-blue-600 text-blue-300 hover:bg-blue-900/30'
+              : 'border-brand text-red-300 hover:bg-red-900/30'
+          }`}
+        >
+          <span>前往{isMachines ? '零組件' : '機台'}後台</span>
+          <span>↗</span>
+        </a>
         <p className="px-4 text-[11px] text-gray-500 mb-2 leading-relaxed">
-          在同一分頁切換；URL 不變
+          將開啟另一站的後台管理
         </p>
 
         <nav className="flex-1 px-2 py-4 space-y-1 text-[24px]">
