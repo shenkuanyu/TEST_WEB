@@ -13,11 +13,11 @@ export default function ProductGallery({ images = [], fallback = '/uploads/place
   return (
     <div>
       {/* 主圖 */}
-      <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden rounded-lg">
+      <div className="relative bg-gray-100 overflow-hidden rounded-lg flex items-center justify-center" style={{ minHeight: '300px', maxHeight: '600px' }}>
         <img
           src={current.image}
           alt={current.caption || ''}
-          className="w-full h-full object-cover"
+          className="max-w-full max-h-[600px] object-contain"
         />
         {list.length > 1 && (
           <>
@@ -49,7 +49,7 @@ export default function ProductGallery({ images = [], fallback = '/uploads/place
                 idx === i ? 'border-brand' : 'border-transparent opacity-60 hover:opacity-100'
               }`}
             >
-              <img src={img.image} alt="" className="w-full h-full object-cover" />
+              <img src={img.image} alt="" className="w-full h-full object-contain bg-gray-50" />
             </button>
           ))}
         </div>
