@@ -419,7 +419,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
                   value={parseFeatures(lang === 'zh' ? data.applications : data.applications_en).join('\n')}
                   onChange={e => update(
                     lang === 'zh' ? 'applications' : 'applications_en',
-                    JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))
+                    JSON.stringify(e.target.value.split('\n'))
                   )}
                   className="input"
                   placeholder={lang === 'zh' ? '模具製造\n汽機車零件\n3C 電子精密加工' : 'Mould & die\nAutomotive parts\nPrecision electronics'}
@@ -435,7 +435,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
                   value={parseFeatures(lang === 'zh' ? data.standard_accessories : data.standard_accessories_en).join('\n')}
                   onChange={e => update(
                     lang === 'zh' ? 'standard_accessories' : 'standard_accessories_en',
-                    JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))
+                    JSON.stringify(e.target.value.split('\n'))
                   )}
                   className="input"
                   placeholder={lang === 'zh' ? '高剛性鑄鐵結構\n直結式伺服馬達\n全封閉安全防護罩' : 'Massive iron construction\nDirect-coupled servo motors\nFull splash safety guard'}
@@ -451,7 +451,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
                   value={parseFeatures(lang === 'zh' ? data.optional_accessories : data.optional_accessories_en).join('\n')}
                   onChange={e => update(
                     lang === 'zh' ? 'optional_accessories' : 'optional_accessories_en',
-                    JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))
+                    JSON.stringify(e.target.value.split('\n'))
                   )}
                   className="input"
                   placeholder={lang === 'zh' ? '主軸中心出水 (CTS)\n主軸油冷機\n排屑機' : 'Coolant Through Spindle\nOil cooler for spindle\nChip conveyor'}
@@ -484,7 +484,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
                   value={parseFeatures(lang === 'zh' ? data.features : data.features_en).join('\n')}
                   onChange={e => update(
                     lang === 'zh' ? 'features' : 'features_en',
-                    JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))
+                    JSON.stringify(e.target.value.split('\n'))
                   )}
                   className="input"
                   placeholder={lang === 'zh' ? '高剛性結構\n精度穩定' : 'High rigidity\nConsistent precision'}
