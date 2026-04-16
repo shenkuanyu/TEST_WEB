@@ -53,4 +53,51 @@ html, body {
   .md-content .md-table { @apply w-full border-collapse my-4; }
   .md-content .md-table th { @apply bg-gray-50 text-left p-2 border border-gray-200 font-semibold; }
   .md-content .md-table td { @apply p-2 border border-gray-200; }
+
+  /* 前台產品介紹 & 規格 Rich Text 樣式（支援 Tiptap / Word 貼上的 HTML） */
+  .product-content h1 { @apply text-2xl font-semibold mt-6 mb-3; }
+  .product-content h2 { @apply text-xl font-semibold mt-5 mb-3; }
+  .product-content h3 { @apply text-lg font-semibold mt-4 mb-2; }
+  .product-content p  { @apply my-3 leading-relaxed text-gray-700; }
+  .product-content ul { @apply list-disc pl-6 my-3 space-y-1 text-gray-700; }
+  .product-content ol { @apply list-decimal pl-6 my-3 space-y-1 text-gray-700; }
+  .product-content a  { @apply text-brand underline; }
+  .product-content strong { @apply font-semibold; }
+  .product-content blockquote { @apply border-l-4 border-brand pl-4 my-4 text-gray-600 italic; }
+
+  /* 規格表格 — 仿 Word 格式：完整框線、交替底色、緊湊間距 */
+  .product-content table,
+  .product-specs table {
+    @apply w-full border-collapse my-6;
+    border: 2px solid #333;
+  }
+  .product-content table th,
+  .product-specs table th {
+    @apply text-left font-semibold text-sm;
+    background: #B81762;
+    color: #fff;
+    padding: 10px 14px;
+    border: 1px solid #333;
+  }
+  .product-content table td,
+  .product-specs table td {
+    @apply text-sm text-gray-800;
+    padding: 8px 14px;
+    border: 1px solid #ccc;
+  }
+  .product-content table tr:nth-child(even) td,
+  .product-specs table tr:nth-child(even) td {
+    background: #f9f9f9;
+  }
+  .product-content table tr:hover td,
+  .product-specs table tr:hover td {
+    background: #fff1f6;
+  }
+  /* Word 貼入的表格第一行常是 th 或粗體行 */
+  .product-specs table tr:first-child td {
+    @apply font-semibold;
+    background: #B81762;
+    color: #fff;
+    border-color: #333;
+  }
 }

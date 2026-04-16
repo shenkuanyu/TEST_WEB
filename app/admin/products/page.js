@@ -181,6 +181,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
   const [mainImgPreview, setMainImgPreview] = useState(null);
   const [dragIdx, setDragIdx] = useState(null);
+  const [lang, setLang] = useState('zh'); // zh/en 語言切換
 
   useEffect(() => {
     if (!product.id) return;
@@ -302,7 +303,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 z-50 overflow-y-auto">
-      <div className="bg-white rounded-lg max-w-4xl w-full my-4">
+      <div className="bg-white rounded-lg max-w-5xl w-full my-4">
         <div className="p-4 border-b flex items-center justify-between">
           <h2 className="text-xl font-semibold">{product.id ? `編輯產品 #${product.id}` : '新增產品'}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-700 text-2xl leading-none">×</button>
@@ -329,7 +330,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
           ))}
         </div>
 
-        <div className="p-6 max-h-[60vh] overflow-y-auto">
+        <div className="p-6 max-h-[75vh] overflow-y-auto">
           {tab === 'basic' && (
             <div className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
@@ -388,160 +389,106 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
 
           {tab === 'intro' && (
             <div className="space-y-6">
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
-                此分頁完整管理前台「產品內頁」上顯示的介紹內容。左邊欄位顯示在中文版網站、右邊顯示在英文版。可直接從 Word 複製貼上，格式會自動保留。
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800 flex-1 mr-4">
+                  管理前台「產品內頁」的介紹內容。可直接從 Word 複製貼上，格式會自動保留。
+                </div>
+                <LangToggle lang={lang} setLang={setLang} />
               </div>
 
               {/* 詳細描述 */}
               <div>
-                <label className="label font-semibold">📝 詳細描述</label>
-                <p className="text-xs text-gray-500 mb-2">產品整段介紹文字。支援粗體、標題、清單、表格等格式。可直接從 Word 複製貼上，格式會自動保留。</p>
-                <div className="grid md:grid-cols-2 gap-3">
-                  <div>
-                    <div className="text-xs text-brand font-medium mb-1">中文</div>
-                    <Suspense fallback={<div className="border rounded p-4 text-gray-400">載入編輯器...</div>}>
-                      <RichTextEditor value={data.description || ''} onChange={v => update('description', v)} rows={12} />
-                    </Suspense>
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-700 font-medium mb-1">English</div>
-                    <Suspense fallback={<div className="border rounded p-4 text-gray-400">Loading editor...</div>}>
-                      <RichTextEditor value={data.description_en || ''} onChange={v => update('description_en', v)} rows={12} />
-                    </Suspense>
-                  </div>
-                </div>
+                <label className="label font-semibold">詳細描述</label>
+                <p className="text-xs text-gray-500 mb-2">產品整段介紹文字。支援粗體、標題、清單、表格等格式。</p>
+                <Suspense fallback={<div className="border rounded p-4 text-gray-400">{lang === 'zh' ? '載入編輯器...' : 'Loading editor...'}</div>}>
+                  <RichTextEditor
+                    key={`desc-${lang}`}
+                    value={lang === 'zh' ? (data.description || '') : (data.description_en || '')}
+                    onChange={v => update(lang === 'zh' ? 'description' : 'description_en', v)}
+                    rows={20}
+                  />
+                </Suspense>
               </div>
 
               {/* 適用產業 */}
               <div>
-                <label className="label font-semibold">🎯 適用產業 / 領域</label>
+                <label className="label font-semibold">適用產業 / 領域</label>
                 <p className="text-xs text-gray-500 mb-2">每行一項（例：模具製造、3C 電子、汽機車零件）。會以標籤顯示在前台。</p>
-                <div className="grid md:grid-cols-2 gap-3">
-                  <div>
-                    <div className="text-xs text-brand font-medium mb-1">中文</div>
-                    <textarea
-                      rows={6}
-                      value={parseFeatures(data.applications).join('\n')}
-                      onChange={e => update('applications', JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean)))}
-                      className="input"
-                      placeholder={'模具製造\n汽機車零件\n3C 電子精密加工'}
-                    />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-700 font-medium mb-1">English</div>
-                    <textarea
-                      rows={6}
-                      value={parseFeatures(data.applications_en).join('\n')}
-                      onChange={e => update('applications_en', JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean)))}
-                      className="input"
-                      placeholder={'Mould & die\nAutomotive parts\nPrecision electronics'}
-                    />
-                  </div>
-                </div>
+                <textarea
+                  rows={6}
+                  value={parseFeatures(lang === 'zh' ? data.applications : data.applications_en).join('\n')}
+                  onChange={e => update(
+                    lang === 'zh' ? 'applications' : 'applications_en',
+                    JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))
+                  )}
+                  className="input"
+                  placeholder={lang === 'zh' ? '模具製造\n汽機車零件\n3C 電子精密加工' : 'Mould & die\nAutomotive parts\nPrecision electronics'}
+                />
               </div>
 
               {/* 標配 */}
               <div>
-                <label className="label font-semibold">✅ 標準配備</label>
+                <label className="label font-semibold">標準配備</label>
                 <p className="text-xs text-gray-500 mb-2">隨機出貨的標準配件 / 功能。每行一項。</p>
-                <div className="grid md:grid-cols-2 gap-3">
-                  <div>
-                    <div className="text-xs text-brand font-medium mb-1">中文</div>
-                    <textarea
-                      rows={8}
-                      value={parseFeatures(data.standard_accessories).join('\n')}
-                      onChange={e => update('standard_accessories', JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean)))}
-                      className="input"
-                      placeholder={'高剛性鑄鐵結構\n直結式伺服馬達\n全封閉安全防護罩'}
-                    />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-700 font-medium mb-1">English</div>
-                    <textarea
-                      rows={8}
-                      value={parseFeatures(data.standard_accessories_en).join('\n')}
-                      onChange={e => update('standard_accessories_en', JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean)))}
-                      className="input"
-                      placeholder={'Massive iron construction\nDirect-coupled servo motors\nFull splash safety guard'}
-                    />
-                  </div>
-                </div>
+                <textarea
+                  rows={8}
+                  value={parseFeatures(lang === 'zh' ? data.standard_accessories : data.standard_accessories_en).join('\n')}
+                  onChange={e => update(
+                    lang === 'zh' ? 'standard_accessories' : 'standard_accessories_en',
+                    JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))
+                  )}
+                  className="input"
+                  placeholder={lang === 'zh' ? '高剛性鑄鐵結構\n直結式伺服馬達\n全封閉安全防護罩' : 'Massive iron construction\nDirect-coupled servo motors\nFull splash safety guard'}
+                />
               </div>
 
               {/* 選配 */}
               <div>
-                <label className="label font-semibold">⚙️ 選購配備</label>
+                <label className="label font-semibold">選購配備</label>
                 <p className="text-xs text-gray-500 mb-2">客戶可加購的升級或擴充功能。每行一項。</p>
-                <div className="grid md:grid-cols-2 gap-3">
-                  <div>
-                    <div className="text-xs text-brand font-medium mb-1">中文</div>
-                    <textarea
-                      rows={8}
-                      value={parseFeatures(data.optional_accessories).join('\n')}
-                      onChange={e => update('optional_accessories', JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean)))}
-                      className="input"
-                      placeholder={'主軸中心出水 (CTS)\n主軸油冷機\n排屑機'}
-                    />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-700 font-medium mb-1">English</div>
-                    <textarea
-                      rows={8}
-                      value={parseFeatures(data.optional_accessories_en).join('\n')}
-                      onChange={e => update('optional_accessories_en', JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean)))}
-                      className="input"
-                      placeholder={'Coolant Through Spindle\nOil cooler for spindle\nChip conveyor'}
-                    />
-                  </div>
-                </div>
+                <textarea
+                  rows={8}
+                  value={parseFeatures(lang === 'zh' ? data.optional_accessories : data.optional_accessories_en).join('\n')}
+                  onChange={e => update(
+                    lang === 'zh' ? 'optional_accessories' : 'optional_accessories_en',
+                    JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))
+                  )}
+                  className="input"
+                  placeholder={lang === 'zh' ? '主軸中心出水 (CTS)\n主軸油冷機\n排屑機' : 'Coolant Through Spindle\nOil cooler for spindle\nChip conveyor'}
+                />
               </div>
             </div>
           )}
 
           {tab === 'specs' && (
             <div className="space-y-5">
-              <div>
-                <label className="label">產品規格</label>
-                <p className="text-xs text-gray-500 mb-2">可使用工具列插入表格、標題、粗體等格式。支援直接從 Word 複製貼上。</p>
-                <div className="grid md:grid-cols-2 gap-3">
-                  <div>
-                    <div className="text-xs text-brand font-medium mb-1">中文</div>
-                    <Suspense fallback={<div className="border rounded p-4 text-gray-400">載入編輯器...</div>}>
-                      <RichTextEditor value={data.specs_md || ''} onChange={v => update('specs_md', v)} rows={12} />
-                    </Suspense>
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-700 font-medium mb-1">English</div>
-                    <Suspense fallback={<div className="border rounded p-4 text-gray-400">Loading editor...</div>}>
-                      <RichTextEditor value={data.specs_md_en || ''} onChange={v => update('specs_md_en', v)} rows={12} />
-                    </Suspense>
-                  </div>
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <label className="label mb-0">產品規格</label>
+                  <p className="text-xs text-gray-500">可使用工具列插入表格、標題、粗體等格式。支援直接從 Word 複製貼上。</p>
                 </div>
+                <LangToggle lang={lang} setLang={setLang} />
               </div>
+              <Suspense fallback={<div className="border rounded p-4 text-gray-400">{lang === 'zh' ? '載入編輯器...' : 'Loading editor...'}</div>}>
+                <RichTextEditor
+                  key={`specs-${lang}`}
+                  value={lang === 'zh' ? (data.specs_md || '') : (data.specs_md_en || '')}
+                  onChange={v => update(lang === 'zh' ? 'specs_md' : 'specs_md_en', v)}
+                  rows={24}
+                />
+              </Suspense>
               <div>
                 <label className="label">產品特色（每行一項）</label>
-                <div className="grid md:grid-cols-2 gap-3">
-                  <div>
-                    <div className="text-xs text-brand font-medium mb-1">中文</div>
-                    <textarea
-                      rows={6}
-                      value={parseFeatures(data.features).join('\n')}
-                      onChange={e => update('features', JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean)))}
-                      className="input"
-                      placeholder={'高剛性結構\n精度穩定'}
-                    />
-                  </div>
-                  <div>
-                    <div className="text-xs text-gray-700 font-medium mb-1">English</div>
-                    <textarea
-                      rows={6}
-                      value={parseFeatures(data.features_en).join('\n')}
-                      onChange={e => update('features_en', JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean)))}
-                      className="input"
-                      placeholder={'High rigidity\nConsistent precision'}
-                    />
-                  </div>
-                </div>
+                <textarea
+                  rows={6}
+                  value={parseFeatures(lang === 'zh' ? data.features : data.features_en).join('\n')}
+                  onChange={e => update(
+                    lang === 'zh' ? 'features' : 'features_en',
+                    JSON.stringify(e.target.value.split('\n').map(s => s.trim()).filter(Boolean))
+                  )}
+                  className="input"
+                  placeholder={lang === 'zh' ? '高剛性結構\n精度穩定' : 'High rigidity\nConsistent precision'}
+                />
               </div>
             </div>
           )}
@@ -670,6 +617,29 @@ function formatSize(n) {
   if (n < 1024) return `${n} B`;
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
   return `${(n / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function LangToggle({ lang, setLang }) {
+  return (
+    <div className="inline-flex rounded-md overflow-hidden border border-gray-300 shrink-0">
+      <button
+        onClick={() => setLang('zh')}
+        className={`px-4 py-1.5 text-sm font-medium transition ${
+          lang === 'zh' ? 'bg-brand text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
+        }`}
+      >
+        中文
+      </button>
+      <button
+        onClick={() => setLang('en')}
+        className={`px-4 py-1.5 text-sm font-medium transition ${
+          lang === 'en' ? 'bg-gray-700 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
+        }`}
+      >
+        English
+      </button>
+    </div>
+  );
 }
 
 function extractYouTubeId(url) {

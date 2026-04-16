@@ -2,6 +2,7 @@ import { getDB } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ProductGallery from '@/components/ProductGallery';
+import ProductTabs from '@/components/ProductTabs';
 import { mdToHtml } from '@/lib/markdown';
 import { getLocale, pickI18n } from '@/lib/i18n';
 import { getSiteMeta } from '@/lib/site';
@@ -195,59 +196,27 @@ export default function ProductDetail({ params }) {
           </div>
         </div>
 
-        {videoId && (
-          <section className="mt-16">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-2xl font-light">產品影片</h2>
-              <a href={product.video_url} target="_blank" rel="noreferrer" className="text-sm text-gray-500 hover:text-brand">在 YouTube 觀看 ↗</a>
-            </div>
-            <div className="aspect-video bg-black rounded-lg overflow-hidden max-w-4xl mx-auto">
-              <iframe
-                src={`https://www.youtube.com/embed/${videoId}?rel=0`}
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title={product.name}
-              />
-            </div>
-          </section>
-        )}
-
-        <section className="mt-16">
-          <div>
-            <h2 className="text-2xl font-light mb-5 pb-3 border-b border-gray-200">
-              {isEn ? 'Product Introduction' : '產品介紹'}
-            </h2>
-            {product.description ? (
-              <div className="md-content text-gray-700" dangerouslySetInnerHTML={{ __html: mdToHtml(product.description) }} />
-            ) : (
-              <p className="text-gray-500 whitespace-pre-line leading-relaxed">
-                {isEn ? '(No description yet)' : '（暫無詳細介紹）'}
-              </p>
-            )}
-
-            {/* 適用產業 */}
-            {applications.length > 0 && (
-              <>
-                <h3 className="text-xl font-light mt-10 mb-4 pb-2 border-b border-gray-200 flex items-center gap-2">
-                  <span>🎯</span> {isEn ? 'Applications' : '適用產業'}
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {applications.map((app, i) => (
-                    <span key={i} className="px-4 py-2 bg-brand/10 text-brand rounded-full text-sm font-medium">
-                      {app}
-                    </span>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {/* 標配 + 選配 配備 */}
-            {(stdAccessories.length > 0 || optAccessories.length > 0) && (
-              <>
-                <h3 className="text-xl font-light mt-10 mb-4 pb-2 border-b border-gray-200 flex items-center gap-2">
-                  <span>🔧</span> {isEn ? 'Equipment & Accessories' : '配備清單'}
-                </h3>
+        {/* 分頁切換：產品介紹 / 規格 / 配備 / 影片 */}
+        <ProductTabs
+          descriptionHtml={product.description ? mdToHtml(product.description) : null}
+          specsHtml={product.specs_md ? mdToHtml(product.specs_md) : null}
+          accessories={
+            (stdAccessories.length > 0 || optAccessories.length > 0 || applications.length > 0) ? (
+              <div>
+                {applications.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-light mb-4 pb-2 border-b border-gray-200 flex items-center gap-2">
+                      {isEn ? 'Applications' : '適用產業'}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {applications.map((app, i) => (
+                        <span key={i} className="px-4 py-2 bg-brand/10 text-brand rounded-full text-sm font-medium">
+                          {app}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="grid sm:grid-cols-2 gap-6">
                   {stdAccessories.length > 0 && (
                     <div>
@@ -282,20 +251,14 @@ export default function ProductDetail({ params }) {
                     </div>
                   )}
                 </div>
-              </>
-            )}
-
-            {product.specs_md && (
-              <>
-                <h2 className="text-2xl font-light mt-10 mb-5 pb-3 border-b border-gray-200">
-                  {isEn ? 'Specifications' : '規格'}
-                </h2>
-                <div className="md-content text-gray-700" dangerouslySetInnerHTML={{ __html: mdToHtml(product.specs_md) }} />
-              </>
-            )}
-          </div>
-
-        </section>
+              </div>
+            ) : null
+          }
+          videoId={videoId}
+          videoUrl={product.video_url}
+          productName={product.name}
+          isEn={isEn}
+        />
 
         {related.length > 0 && (
           <section className="mt-16 pt-10 border-t border-gray-200">
