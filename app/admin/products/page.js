@@ -145,7 +145,7 @@ export default function AdminProducts() {
                     </div>
                   </div>
                 </td>
-                <td><img src={p.image ? `/_next/image?url=${encodeURIComponent(p.image)}&w=96&q=60` : '/uploads/placeholder.svg'} className="w-12 h-12 object-cover rounded" alt="" loading="lazy" /></td>
+                <td><img src={p.image || '/uploads/placeholder.svg'} className="w-12 h-12 object-cover rounded" alt="" loading="lazy" /></td>
                 <td className="font-mono text-gray-600">{p.model_code || '-'}</td>
                 <td className="font-medium">{p.name}</td>
                 <td className="text-gray-500">{cats.find(c => c.id === p.category_id)?.name || '-'}</td>
