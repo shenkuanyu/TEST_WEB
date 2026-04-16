@@ -65,29 +65,32 @@ html, body {
   .product-content strong { @apply font-semibold; }
   .product-content blockquote { @apply border-l-4 border-brand pl-4 my-4 text-gray-600 italic; }
 
-  /* 規格表格 — 仿 Word 格式：完整框線、交替底色、緊湊間距 */
+  /* 規格表格 — 白底灰交替、緊湊間距 */
   .product-content table,
   .product-specs table {
     @apply w-full border-collapse my-6;
-    border: 2px solid #333;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
   }
   .product-content table th,
   .product-specs table th {
-    @apply text-left font-semibold text-sm;
-    background: #B81762;
-    color: #fff;
-    padding: 10px 14px;
-    border: 1px solid #333;
+    @apply text-left font-semibold;
+    background: #f3f4f6;
+    color: #374151;
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    font-size: 13px;
   }
   .product-content table td,
   .product-specs table td {
-    @apply text-sm text-gray-800;
-    padding: 8px 14px;
-    border: 1px solid #ccc;
+    color: #374151;
+    padding: 5px 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 13px;
   }
   .product-content table tr:nth-child(even) td,
   .product-specs table tr:nth-child(even) td {
-    background: #f9f9f9;
+    background: #f9fafb;
   }
   .product-content table tr:hover td,
   .product-specs table tr:hover td {
@@ -96,8 +99,8 @@ html, body {
   /* Word 貼入的表格第一行常是 th 或粗體行 */
   .product-specs table tr:first-child td {
     @apply font-semibold;
-    background: #B81762;
-    color: #fff;
-    border-color: #333;
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #d1d5db;
   }
 }
