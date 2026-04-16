@@ -7,7 +7,7 @@ import { getDB } from '@/lib/db';
 import { getLocale, pickI18n } from '@/lib/i18n';
 import { getSiteMeta } from '@/lib/site';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // ISR: 每 60 秒重新產生
 
 export default function Home() {
   const db = getDB();

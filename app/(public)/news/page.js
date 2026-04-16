@@ -1,7 +1,7 @@
 import NewsCard from '@/components/NewsCard';
 import { getDB } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 export const metadata = { title: '最新消息' };
 
 export default function NewsPage() {

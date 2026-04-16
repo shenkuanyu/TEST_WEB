@@ -222,6 +222,12 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
       setData(d => ({ ...d, image: result.product.image }));
       setMainImgPreview(null);
     }
+    // 清除前台快取，讓修改立刻生效
+    fetch('/api/admin/revalidate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paths: ['/', '/products', `/products/${product.id}`] }),
+    }).catch(() => {});
     onSaved();
   }
 

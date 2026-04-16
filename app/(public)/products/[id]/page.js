@@ -6,7 +6,7 @@ import { mdToHtml } from '@/lib/markdown';
 import { getLocale, pickI18n } from '@/lib/i18n';
 import { getSiteMeta } from '@/lib/site';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const db = getDB();
