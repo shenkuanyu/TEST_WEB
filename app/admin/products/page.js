@@ -152,6 +152,8 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
   const [images, setImages] = useState([]);
   const [downloads, setDownloads] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [mainImgPreview, setMainImgPreview] = useState(null);
+  const [dragIdx, setDragIdx] = useState(null);
 
   useEffect(() => {
     if (!product.id) return;
@@ -188,6 +190,11 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
     if (!r.ok) return alert('儲存失敗');
     const result = await r.json().catch(() => ({}));
     if (!product.id && result.id) product.id = result.id;
+    // 更新主圖路徑（從伺服器回傳）
+    if (result.product?.image) {
+      setData(d => ({ ...d, image: result.product.image }));
+      setMainImgPreview(null);
+    }
     onSaved();
   }
 
@@ -211,6 +218,29 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
     if (!confirm('刪除這張圖？')) return;
     await fetch(`/api/admin/products/${product.id}/images?id=${id}`, { method: 'DELETE' });
     setImages(images.filter(i => i.id !== id));
+  }
+
+  // 拖拽排序圖片
+  async function reorderImages(fromIdx, toIdx) {
+    if (fromIdx === toIdx) return;
+    const arr = [...images];
+    const [moved] = arr.splice(fromIdx, 1);
+    arr.splice(toIdx, 0, moved);
+    setImages(arr);
+    // 批次更新 sort_order
+    for (let i = 0; i < arr.length; i++) {
+      await fetch(`/api/admin/products/${product.id}/images?id=${arr[i].id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ caption: arr[i].caption, sort_order: i }),
+      });
+    }
+  }
+
+  function moveImage(idx, direction) {
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= images.length) return;
+    reorderImages(idx, newIdx);
   }
 
   async function addDownloads(e) {
@@ -303,9 +333,18 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
 
               <div>
                 <label className="label">主圖（用於列表縮圖）</label>
-                <input id="mainImgInput" type="file" accept="image/*" className="input" />
+                <input id="mainImgInput" type="file" accept="image/*" className="input" onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    setMainImgPreview(URL.createObjectURL(file));
+                  } else {
+                    setMainImgPreview(null);
+                  }
+                }} />
                 <p className="mt-1 text-xs text-gray-400">建議尺寸：800 × 600 px（4:3 比例），會用於產品列表卡片縮圖</p>
-                {data.image && <img src={data.image} className="w-24 h-24 mt-2 rounded object-cover" alt="" />}
+                {(mainImgPreview || data.image) && (
+                  <img src={mainImgPreview || data.image} className="w-24 h-24 mt-2 rounded object-cover" alt="" />
+                )}
               </div>
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2"><input type="checkbox" checked={data.published !== 0} onChange={e => update('published', e.target.checked ? 1 : 0)} /> 上架</label>
@@ -487,14 +526,25 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
                 </label>
                 {!product.id && <span className="ml-3 text-sm text-gray-500">（請先儲存基本資料後再上傳）</span>}
               </div>
+              <p className="text-xs text-gray-500 mt-2 mb-1">拖拽圖片可調整順序，或使用 ← → 按鈕移動</p>
               <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-                {images.map(img => (
-                  <div key={img.id} className="relative group">
-                    <img src={img.image} className="w-full aspect-square object-cover rounded border" alt={img.caption || ''} />
-                    <button
-                      onClick={() => removeImage(img.id)}
-                      className="absolute top-1 right-1 w-6 h-6 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition text-xs"
-                    >×</button>
+                {images.map((img, idx) => (
+                  <div
+                    key={img.id}
+                    className={`relative group rounded border-2 transition ${dragIdx === idx ? 'border-brand opacity-50' : 'border-transparent'}`}
+                    draggable
+                    onDragStart={e => { setDragIdx(idx); e.dataTransfer.effectAllowed = 'move'; }}
+                    onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
+                    onDrop={e => { e.preventDefault(); if (dragIdx !== null) reorderImages(dragIdx, idx); setDragIdx(null); }}
+                    onDragEnd={() => setDragIdx(null)}
+                  >
+                    <img src={img.image} className="w-full aspect-square object-cover rounded cursor-grab active:cursor-grabbing" alt={img.caption || ''} />
+                    <div className="absolute inset-x-0 bottom-0 flex justify-center gap-1 p-1 bg-black/40 opacity-0 group-hover:opacity-100 transition rounded-b">
+                      <button onClick={() => moveImage(idx, -1)} disabled={idx === 0} className="w-6 h-6 bg-white/90 rounded text-xs disabled:opacity-30" title="往前">←</button>
+                      <button onClick={() => moveImage(idx, 1)} disabled={idx === images.length - 1} className="w-6 h-6 bg-white/90 rounded text-xs disabled:opacity-30" title="往後">→</button>
+                      <button onClick={() => removeImage(img.id)} className="w-6 h-6 bg-red-600 text-white rounded text-xs" title="刪除">×</button>
+                    </div>
+                    <span className="absolute top-1 left-1 bg-black/50 text-white text-xs px-1.5 py-0.5 rounded">{idx + 1}</span>
                   </div>
                 ))}
                 {!images.length && <p className="col-span-full text-center text-gray-400 py-8">尚無圖片</p>}

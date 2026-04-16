@@ -63,7 +63,8 @@ export async function PUT(req, { params }) {
     fd.get('optional_accessories_en') || null,
     id,
   );
-  return NextResponse.json({ ok: true });
+  const updated = db.prepare('SELECT * FROM products WHERE id=?').get(id);
+  return NextResponse.json({ ok: true, product: updated });
 }
 
 export async function DELETE(_req, { params }) {
