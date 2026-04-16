@@ -213,8 +213,8 @@ export default function ProductDetail({ params }) {
           </section>
         )}
 
-        <section className="mt-16 grid lg:grid-cols-3 gap-10">
-          <div className="lg:col-span-2">
+        <section className="mt-16">
+          <div>
             <h2 className="text-2xl font-light mb-5 pb-3 border-b border-gray-200">
               {isEn ? 'Product Introduction' : '產品介紹'}
             </h2>
@@ -295,36 +295,6 @@ export default function ProductDetail({ params }) {
             )}
           </div>
 
-          <aside className="lg:col-span-1">
-            <div className="bg-gray-50 p-6 rounded-lg sticky top-28">
-              <h3 className="text-sm font-semibold tracking-widest text-gray-500 mb-4">QUICK INFO</h3>
-              <dl className="space-y-3 text-sm">
-                {product.model_code && (
-                  <div className="flex justify-between border-b border-gray-200 pb-2">
-                    <dt className="text-gray-500">型號</dt>
-                    <dd className="font-medium font-mono">{product.model_code}</dd>
-                  </div>
-                )}
-                {product.category_name && (
-                  <div className="flex justify-between border-b border-gray-200 pb-2">
-                    <dt className="text-gray-500">分類</dt>
-                    <dd className="font-medium">{product.category_name}</dd>
-                  </div>
-                )}
-                <div className="flex justify-between border-b border-gray-200 pb-2">
-                  <dt className="text-gray-500">圖片數</dt>
-                  <dd className="font-medium">{galleryImages.length}</dd>
-                </div>
-                <div className="flex justify-between border-b border-gray-200 pb-2">
-                  <dt className="text-gray-500">下載檔</dt>
-                  <dd className="font-medium">{downloads.length}</dd>
-                </div>
-              </dl>
-              <Link href={`/contact?product=${encodeURIComponent(product.name)}`} className="btn-primary w-full !justify-center mt-5">
-                立即詢價
-              </Link>
-            </div>
-          </aside>
         </section>
 
         {related.length > 0 && (
