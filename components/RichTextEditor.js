@@ -9,6 +9,7 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Color from '@tiptap/extension-color';
 import TextStyle from '@tiptap/extension-text-style';
+import Image from '@tiptap/extension-image';
 import { useEffect, useRef } from 'react';
 
 /**
@@ -32,6 +33,7 @@ export default function RichTextEditor({ value, onChange, placeholder, rows = 12
       TableRow,
       TableHeader,
       TableCell,
+      Image.configure({ inline: false, allowBase64: false }),
     ],
     content: value || '',
     onUpdate: ({ editor }) => {
@@ -100,6 +102,9 @@ export default function RichTextEditor({ value, onChange, placeholder, rows = 12
           pointer-events: none;
           float: left;
           height: 0;
+        }
+        .rich-editor-content img {
+          max-width: 100%; height: auto; border-radius: 4px; margin: 0.5em 0;
         }
         .ProseMirror-focused { outline: none; }
         .ProseMirror { min-height: inherit; }
@@ -172,6 +177,37 @@ function Toolbar({ editor }) {
 
       {/* Blockquote */}
       {btn(editor.isActive('blockquote'), () => editor.chain().focus().toggleBlockquote().run(), '引用')}
+      {sep}
+
+      {/* Image upload */}
+      <label
+        title="插入圖片"
+        className="px-2 py-1 text-sm rounded hover:bg-gray-200 text-gray-700 cursor-pointer"
+      >
+        圖片
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={async (e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            e.target.value = '';
+            const fd = new FormData();
+            fd.append('images', file);
+            try {
+              const res = await fetch('/api/admin/upload-image', { method: 'POST', body: fd });
+              if (!res.ok) throw new Error('upload failed');
+              const data = await res.json();
+              if (data.url) {
+                editor.chain().focus().setImage({ src: data.url }).run();
+              }
+            } catch (err) {
+              alert('圖片上傳失敗：' + err.message);
+            }
+          }}
+        />
+      </label>
 
       {/* Undo / Redo */}
       {sep}
