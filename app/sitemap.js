@@ -4,7 +4,7 @@ import { getSiteMeta, SITE_CODE } from '@/lib/site';
 export default function sitemap() {
   const site = getSiteMeta();
   const domain = SITE_CODE === 'machines'
-    ? 'https://poshtech.com.tw'
+    ? 'https://machines.poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
 
   // 固定頁面
@@ -16,16 +16,25 @@ export default function sitemap() {
     { url: `${domain}/contact`, changeFrequency: 'monthly', priority: 0.6 },
   ];
 
-  // 動態頁面：產品
+  // 動態頁面：產品（含分類篩選頁）
   let productPages = [];
+  let categoryPages = [];
   try {
     const db = getDB();
-    const products = db.prepare('SELECT id, updated_at FROM products WHERE visible = 1 ORDER BY sort_order').all();
+    const products = db.prepare('SELECT id, updated_at FROM products WHERE published = 1 ORDER BY sort_order').all();
     productPages = products.map(p => ({
       url: `${domain}/products/${p.id}`,
       lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
+    }));
+
+    // 分類頁面
+    const categories = db.prepare('SELECT id FROM categories ORDER BY sort_order').all();
+    categoryPages = categories.map(c => ({
+      url: `${domain}/products?cat=${c.id}`,
+      changeFrequency: 'weekly',
+      priority: 0.7,
     }));
   } catch (e) {
     // DB 未建立時不中斷
@@ -44,5 +53,5 @@ export default function sitemap() {
     }));
   } catch (e) {}
 
-  return [...staticPages, ...productPages, ...newsPages];
+  return [...staticPages, ...categoryPages, ...productPages, ...newsPages];
 }

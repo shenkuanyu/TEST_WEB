@@ -11,11 +11,24 @@ export async function generateMetadata() {
   const locale = getLocale();
   const isEn = locale === 'en';
   const brand = site.code === 'machines' ? 'POSHTECH | ' : '';
+  const domain = site.code === 'machines'
+    ? 'https://machines.poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
   return {
     title: isEn
       ? `${brand}Products — ${site.brand_en}`
       : `產品資訊 — ${site.brand_zh}`,
     description: isEn ? site.seo_description_en : site.seo_description_zh,
+    alternates: {
+      canonical: `${domain}/products`,
+    },
+    openGraph: {
+      title: isEn
+        ? `${brand}Products — ${site.brand_en}`
+        : `產品資訊 — ${site.brand_zh}`,
+      description: isEn ? site.seo_description_en : site.seo_description_zh,
+      url: `${domain}/products`,
+    },
   };
 }
 

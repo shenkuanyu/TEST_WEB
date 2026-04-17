@@ -1,7 +1,10 @@
 # 久洋機械 POSHTECH — robots.txt
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/admin
 
 # Sitemaps
 Sitemap: https://poshtech.com.tw/sitemap.xml
+Sitemap: https://machines.poshtech.com.tw/sitemap.xml
 Sitemap: https://parts.poshtech.com.tw/sitemap.xml

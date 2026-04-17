@@ -17,14 +17,46 @@ export async function generateMetadata({ params }) {
   if (!p) return {};
   const name = pickI18n(p, 'name', locale);
   const summary = pickI18n(p, 'summary', locale);
-  const brandPrefix = site.code === 'machines' ? 'POSHTECH | ' : '';
+  const isEn = locale === 'en';
+  const brandPrefix = site.code === 'machines' ? 'POSHTECH | ' : 'Jeouyang | ';
+  const domain = site.code === 'machines'
+    ? 'https://machines.poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+
+  // 取得分類名稱作為關鍵字
+  let catName = '';
+  if (p.category_id) {
+    const cat = db.prepare('SELECT name, name_en FROM categories WHERE id=?').get(p.category_id);
+    if (cat) catName = isEn && cat.name_en ? cat.name_en : cat.name;
+  }
+
+  const baseKeywords = site.code === 'machines'
+    ? 'POSHTECH, 久洋機械, CNC, machining center, 加工中心, Taiwan'
+    : 'POSHTECH, 久洋零組件, 工具機零件, machine tool parts, Taiwan';
+  const productKeywords = [name, p.model_code, catName].filter(Boolean).join(', ');
+
+  const descFallback = isEn
+    ? `${name}${p.model_code ? ` (${p.model_code})` : ''} — ${site.code === 'machines' ? 'POSHTECH CNC machining center, manufactured in Taiwan' : 'Jeouyang precision machine tool component'}`
+    : `${name}${p.model_code ? ` (${p.model_code})` : ''} — ${site.code === 'machines' ? '久洋機械 POSHTECH 台灣製造 CNC 加工中心' : '久洋零組件 高品質工具機零件'}`;
+
   return {
-    title: `${brandPrefix}${name}`,
-    description: summary || `${name} — ${site.code === 'machines' ? 'POSHTECH CNC machining center' : 'Jeouyang machine tool component'}`,
+    title: `${brandPrefix}${name}${p.model_code ? ` ${p.model_code}` : ''}`,
+    description: summary || descFallback,
+    keywords: `${productKeywords}, ${baseKeywords}`,
+    alternates: {
+      canonical: `${domain}/products/${params.id}`,
+    },
     openGraph: {
       title: `${brandPrefix}${name}`,
-      description: summary,
-      images: p.image ? [p.image] : undefined,
+      description: summary || descFallback,
+      images: p.image ? [`${domain}${p.image}`] : undefined,
+      type: 'website',
+      url: `${domain}/products/${params.id}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${brandPrefix}${name}`,
+      description: summary || descFallback,
     },
   };
 }
@@ -87,6 +119,10 @@ export default function ProductDetail({ params }) {
   const optAccessories = parseFeatures(product.optional_accessories);
   const videoId = extractYouTubeId(product.video_url);
 
+  const domain = site.code === 'machines'
+    ? 'https://machines.poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+
   // 產品層級 Schema.org
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -94,13 +130,35 @@ export default function ProductDetail({ params }) {
     name: product.name,
     description: product.summary || product.description,
     sku: product.model_code || undefined,
-    image: images.length ? images.map(i => i.image) : (product.image ? [product.image] : []),
+    image: images.length ? images.map(i => `${domain}${i.image}`) : (product.image ? [`${domain}${product.image}`] : []),
+    url: `${domain}/products/${id}`,
     brand: {
       '@type': 'Brand',
       name: site.code === 'machines' ? 'POSHTECH' : 'Jeouyang',
     },
     manufacturer: { '@id': 'https://jeouyang.com.tw/#organization' },
     category: product.category_name,
+  };
+
+  // 麵包屑結構化資料 — 幫助 Google 搜尋結果顯示導覽路徑
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: isEn ? 'Home' : '首頁', item: domain },
+      { '@type': 'ListItem', position: 2, name: isEn ? 'Products' : '產品資訊', item: `${domain}/products` },
+      ...(product.category_name ? [{
+        '@type': 'ListItem', position: 3,
+        name: product.category_name,
+        item: `${domain}/products?cat=${product.category_id}`,
+      }] : []),
+      {
+        '@type': 'ListItem',
+        position: product.category_name ? 4 : 3,
+        name: product.name,
+        item: `${domain}/products/${id}`,
+      },
+    ],
   };
 
   const galleryImages = images.length
@@ -288,6 +346,11 @@ export default function ProductDetail({ params }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+        />
+        {/* 麵包屑結構化資料 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
       </div>
     </div>

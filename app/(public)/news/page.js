@@ -1,8 +1,29 @@
 import NewsCard from '@/components/NewsCard';
 import { getDB } from '@/lib/db';
+import { getSiteMeta } from '@/lib/site';
+import { getLocale } from '@/lib/i18n';
 
 export const revalidate = 60;
-export const metadata = { title: '最新消息' };
+
+export function generateMetadata() {
+  const site = getSiteMeta();
+  const locale = getLocale();
+  const isEn = locale === 'en';
+  const domain = site.code === 'machines'
+    ? 'https://machines.poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+  return {
+    title: isEn ? `News — ${site.brand_en}` : `最新消息 — ${site.brand_zh}`,
+    description: isEn
+      ? `Latest news and updates from ${site.brand_en}. New products, exhibitions, and company announcements.`
+      : `${site.brand_zh}最新消息：新產品發表、展覽資訊、公司動態。`,
+    alternates: { canonical: `${domain}/news` },
+    openGraph: {
+      title: isEn ? `News — ${site.brand_en}` : `最新消息 — ${site.brand_zh}`,
+      url: `${domain}/news`,
+    },
+  };
+}
 
 export default function NewsPage() {
   const db = getDB();

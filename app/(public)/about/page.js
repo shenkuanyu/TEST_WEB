@@ -1,6 +1,28 @@
 import Link from 'next/link';
+import { getSiteMeta } from '@/lib/site';
+import { getLocale } from '@/lib/i18n';
 
-export const metadata = { title: '公司介紹｜久洋機械股份有限公司' };
+export function generateMetadata() {
+  const site = getSiteMeta();
+  const locale = getLocale();
+  const isEn = locale === 'en';
+  const domain = site.code === 'machines'
+    ? 'https://machines.poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+  return {
+    title: isEn
+      ? `About — ${site.brand_en} | Taiwan CNC Machine Manufacturer Since 1994`
+      : `公司介紹 — ${site.brand_zh} | 台灣CNC工具機製造商`,
+    description: isEn
+      ? `${site.brand_en} (Jeouyang Machinery) — Taiwan CNC machine manufacturer established in 1994. Professional vertical, horizontal and gantry machining centers.`
+      : `${site.brand_zh}（久洋機械股份有限公司）成立於1994年，台中專業CNC加工中心製造商，產品外銷全球。`,
+    alternates: { canonical: `${domain}/about` },
+    openGraph: {
+      title: isEn ? `About — ${site.brand_en}` : `公司介紹 — ${site.brand_zh}`,
+      url: `${domain}/about`,
+    },
+  };
+}
 
 export default function AboutPage() {
   return (

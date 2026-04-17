@@ -12,6 +12,10 @@ export async function generateMetadata() {
   const title = isEn ? site.seo_title_en : site.seo_title_zh;
   const description = isEn ? site.seo_description_en : site.seo_description_zh;
 
+  const domain = site.code === 'machines'
+    ? 'https://machines.poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+
   return {
     title,
     description,
@@ -23,17 +27,20 @@ export async function generateMetadata() {
       ],
       apple: '/apple-icon.png',
     },
+    metadataBase: new URL(domain),
     alternates: {
+      canonical: '/',
       // 告訴 Google 本頁有兩種語言版本，使用者依 locale cookie 切換
       languages: {
-        'zh-Hant': '/',
-        en: '/?lang=en',
+        'zh-Hant': domain,
+        en: `${domain}/?lang=en`,
       },
     },
     openGraph: {
       title,
       description,
       type: 'website',
+      url: domain,
       images: s.seo_og_image ? [s.seo_og_image] : undefined,
       siteName: site.brand_en,
     },
@@ -88,16 +95,28 @@ export default function RootLayout({ children }) {
     sameAs: [],
   };
 
+  const siteUrl = site.code === 'machines'
+    ? 'https://machines.poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    '@id': `https://${site.code === 'machines' ? 'jeouyang.com.tw' : 'parts.jeouyang.com.tw'}/#website`,
+    '@id': `${siteUrl}/#website`,
     name: site.code === 'machines'
-      ? 'POSHTECH / Jeouyang Machinery'
-      : 'Jeouyang Components',
-    url: `https://${site.code === 'machines' ? 'jeouyang.com.tw' : 'parts.jeouyang.com.tw'}`,
+      ? 'POSHTECH / Jeouyang Machinery — CNC 加工中心'
+      : 'Jeouyang Components — 工具機零組件',
+    alternateName: site.code === 'machines'
+      ? ['久洋機械', 'POSHTECH', 'Jeouyang Machinery']
+      : ['久洋零組件', 'POSHTECH Components', 'Jeouyang Components'],
+    url: siteUrl,
     inLanguage: ['zh-Hant', 'en'],
     publisher: { '@id': 'https://jeouyang.com.tw/#organization' },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${siteUrl}/products?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
   };
 
   return (
