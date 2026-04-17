@@ -50,6 +50,9 @@ export async function generateMetadata() {
       description,
     },
     robots: { index: true, follow: true },
+    ...(site.seo_google_verification ? {
+      verification: { google: site.seo_google_verification },
+    } : {}),
   };
 }
 

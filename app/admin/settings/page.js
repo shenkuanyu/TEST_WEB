@@ -150,10 +150,31 @@ export default function AdminSettings() {
 
         {tab === 'seo' && (
           <>
-            <Field label="預設 Meta Title" k="seo_default_title" data={data} onChange={update} />
-            <Field label="預設 Meta Description" k="seo_default_description" data={data} onChange={update} type="textarea" />
-            <Field label="預設 Meta Keywords" k="seo_default_keywords" data={data} onChange={update} hint="以逗號分隔" />
-            <Field label="預設 OG 分享圖（社群分享縮圖）" k="seo_og_image" data={data} onChange={update} hint="例：/uploads/about.jpg，建議 1200×630" />
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800 mb-2">
+              <strong>SEO 設定說明：</strong>這裡的設定會影響 Google 搜尋結果中顯示的標題、描述和關鍵字。
+              修改後需要重新部署才會生效。若留空，系統會使用程式碼中的預設值。
+            </div>
+
+            <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">網站標題（顯示在 Google 搜尋結果）</h3>
+            <Bilingual label="Meta Title" zhKey="seo_title_zh" enKey="seo_title_en" data={data} onChange={update} />
+            <p className="text-xs text-gray-500 -mt-4">建議 30～60 字元，包含品牌名和主要產品關鍵字</p>
+
+            <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">網站描述（Google 搜尋結果的說明文字）</h3>
+            <Bilingual label="Meta Description" zhKey="seo_description_zh" enKey="seo_description_en" data={data} onChange={update} type="textarea" />
+            <p className="text-xs text-gray-500 -mt-4">建議 70～160 字元，概述公司特色、產品優勢</p>
+
+            <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">關鍵字</h3>
+            <Bilingual label="Meta Keywords" zhKey="seo_keywords_zh" enKey="seo_keywords_en" data={data} onChange={update} type="textarea" />
+            <p className="text-xs text-gray-500 -mt-4">
+              以逗號分隔。中文範例：久洋機械, CNC加工中心, 立式加工中心, 工具機<br />
+              英文範例：POSHTECH, CNC machining center, vertical machining center, Taiwan
+            </p>
+
+            <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">社群分享</h3>
+            <Field label="OG 分享圖（社群分享時顯示的縮圖）" k="seo_og_image" data={data} onChange={update} hint="例：/uploads/about.jpg，建議 1200×630 px" />
+
+            <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 mt-6">Google 驗證</h3>
+            <Field label="Google Search Console 驗證碼" k="seo_google_verification" data={data} onChange={update} hint="從 Google Search Console 取得的 HTML 標籤驗證碼，只需貼 content 的值。例如：abc123xyz" />
           </>
         )}
 
