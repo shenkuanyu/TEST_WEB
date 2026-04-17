@@ -315,7 +315,7 @@ function Bilingual({ label, zhKey, enKey, data, onChange, type = 'text' }) {
       <label className="label">{label}</label>
       <div className="space-y-2">
         <div className="flex">
-          <span className="shrink-0 inline-flex items-center px-3 bg-brand text-white text-sm rounded-l">繁中</span>
+          <span className="shrink-0 inline-flex items-center px-3 bg-brand text-white text-sm rounded-l">中文</span>
           <Input
             className="input !rounded-l-none"
             rows={type === 'textarea' ? 3 : undefined}
