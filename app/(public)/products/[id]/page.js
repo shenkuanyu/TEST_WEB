@@ -82,6 +82,81 @@ function fmtSize(n) {
   return `${(n / 1024 / 1024).toFixed(1)} MB`;
 }
 
+function FileTypeIcon({ filename }) {
+  const ext = (filename || '').split('.').pop().toLowerCase();
+  const size = 36;
+
+  // PDF 圖示
+  if (ext === 'pdf') return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="2" width="32" height="36" rx="3" fill="#E53935" />
+      <path d="M12 6h10l8 8v20a2 2 0 01-2 2H12a2 2 0 01-2-2V8a2 2 0 012-2z" fill="#EF5350" />
+      <path d="M22 6v8h8" fill="#E53935" />
+      <text x="20" y="29" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="Arial">PDF</text>
+    </svg>
+  );
+
+  // Word 圖示
+  if (['doc', 'docx'].includes(ext)) return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="2" width="32" height="36" rx="3" fill="#1565C0" />
+      <path d="M12 6h10l8 8v20a2 2 0 01-2 2H12a2 2 0 01-2-2V8a2 2 0 012-2z" fill="#1E88E5" />
+      <path d="M22 6v8h8" fill="#1565C0" />
+      <text x="20" y="29" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial">DOC</text>
+    </svg>
+  );
+
+  // Excel 圖示
+  if (['xls', 'xlsx', 'csv'].includes(ext)) return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="2" width="32" height="36" rx="3" fill="#2E7D32" />
+      <path d="M12 6h10l8 8v20a2 2 0 01-2 2H12a2 2 0 01-2-2V8a2 2 0 012-2z" fill="#43A047" />
+      <path d="M22 6v8h8" fill="#2E7D32" />
+      <text x="20" y="29" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial">XLS</text>
+    </svg>
+  );
+
+  // CAD 圖示（DWG / DXF / STEP / STP / IGES / IGS）
+  if (['dwg', 'dxf', 'step', 'stp', 'iges', 'igs', 'sat', 'x_t', 'x_b', '3dm'].includes(ext)) return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="2" width="32" height="36" rx="3" fill="#F57C00" />
+      <path d="M12 6h10l8 8v20a2 2 0 01-2 2H12a2 2 0 01-2-2V8a2 2 0 012-2z" fill="#FB8C00" />
+      <path d="M22 6v8h8" fill="#F57C00" />
+      <text x="20" y="29" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial">CAD</text>
+    </svg>
+  );
+
+  // 圖片圖示
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext)) return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="2" width="32" height="36" rx="3" fill="#7B1FA2" />
+      <path d="M12 6h10l8 8v20a2 2 0 01-2 2H12a2 2 0 01-2-2V8a2 2 0 012-2z" fill="#9C27B0" />
+      <path d="M22 6v8h8" fill="#7B1FA2" />
+      <text x="20" y="29" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial">IMG</text>
+    </svg>
+  );
+
+  // ZIP / RAR 壓縮檔
+  if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="2" width="32" height="36" rx="3" fill="#455A64" />
+      <path d="M12 6h10l8 8v20a2 2 0 01-2 2H12a2 2 0 01-2-2V8a2 2 0 012-2z" fill="#607D8B" />
+      <path d="M22 6v8h8" fill="#455A64" />
+      <text x="20" y="29" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial">ZIP</text>
+    </svg>
+  );
+
+  // 通用檔案圖示
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none">
+      <rect x="4" y="2" width="32" height="36" rx="3" fill="#78909C" />
+      <path d="M12 6h10l8 8v20a2 2 0 01-2 2H12a2 2 0 01-2-2V8a2 2 0 012-2z" fill="#90A4AE" />
+      <path d="M22 6v8h8" fill="#78909C" />
+      <text x="20" y="29" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial">FILE</text>
+    </svg>
+  );
+}
+
 export default function ProductDetail({ params }) {
   const db = getDB();
   const id = Number(params.id);
@@ -250,14 +325,19 @@ export default function ProductDetail({ params }) {
                 </p>
                 <div className="space-y-2">
                   {downloads.map(d => (
-                    <a key={d.id} href={d.file_path} target="_blank" rel="noreferrer"
+                    <a key={d.id} href={d.file_path} target="_blank" rel="noreferrer" download
                        className="flex items-center gap-3 p-3 border border-gray-200 rounded hover:border-brand hover:bg-gray-50 transition group">
-                      <span className="text-2xl">📄</span>
+                      <FileTypeIcon filename={d.file_path || d.label} />
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-gray-900 group-hover:text-brand truncate">{d.label}</div>
-                        <div className="text-xs text-gray-500">{fmtSize(d.file_size)}</div>
+                        <div className="text-xs text-gray-500">
+                          {(d.file_path || '').split('.').pop().toUpperCase()}
+                          {d.file_size ? ` · ${fmtSize(d.file_size)}` : ''}
+                        </div>
                       </div>
-                      <span className="text-brand">↓</span>
+                      <svg className="w-5 h-5 text-brand shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
                     </a>
                   ))}
                 </div>

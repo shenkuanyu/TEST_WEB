@@ -1,4 +1,5 @@
 import ProductCard from '@/components/ProductCard';
+import ProductSearch from '@/components/ProductSearch';
 import { getDB } from '@/lib/db';
 import Link from 'next/link';
 import { getLocale, pickI18n } from '@/lib/i18n';
@@ -60,6 +61,11 @@ export default function ProductsPage({ searchParams }) {
       </section>
 
       <section className="container py-12">
+        {/* 搜尋列 */}
+        <div className="mb-8">
+          <ProductSearch placeholder={isEn ? 'Search products by name or model…' : '搜尋產品名稱或型號…'} />
+        </div>
+
         <div className="flex flex-wrap gap-2 mb-8 justify-center">
           <Link href="/products" className={`px-4 py-1.5 rounded-full text-sm ${!cat ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
             {isEn ? 'All' : '全部'}

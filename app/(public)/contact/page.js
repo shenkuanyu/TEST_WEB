@@ -1,9 +1,20 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 export default function ContactPage() {
+  const searchParams = useSearchParams();
+  const productName = searchParams.get('product') || '';
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  // 從產品頁點「產品詢價」過來時，自動帶入產品名稱
+  useEffect(() => {
+    if (productName) {
+      setMessage(`您好，我想詢問關於「${productName}」的價格與規格資訊。\n\n`);
+    }
+  }, [productName]);
 
   async function submit(e) {
     e.preventDefault();
@@ -69,6 +80,15 @@ export default function ContactPage() {
               ✅ 您的訊息已送出，我們將盡快與您聯絡。
             </div>
           )}
+          {productName && (
+            <div className="mb-4 p-4 bg-brand/5 border border-brand/20 rounded-lg flex items-center gap-3">
+              <svg className="w-6 h-6 text-brand shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+              <div>
+                <p className="text-sm text-gray-600">您正在詢問的產品：</p>
+                <p className="font-semibold text-gray-900">{productName}</p>
+              </div>
+            </div>
+          )}
           <h2 className="text-2xl font-light mb-6">線上詢價 / 留言</h2>
           <form onSubmit={submit} className="space-y-4">
             <div>
@@ -87,7 +107,7 @@ export default function ContactPage() {
             </div>
             <div>
               <label className="label">訊息內容 *</label>
-              <textarea name="message" required rows={6} className="input" placeholder="請簡述您想詢問的產品或需求" />
+              <textarea name="message" required rows={6} className="input" placeholder="請簡述您想詢問的產品或需求" value={message} onChange={e => setMessage(e.target.value)} />
             </div>
             <button disabled={loading} className="btn-primary disabled:opacity-50">
               {loading ? '送出中…' : '送出訊息'}
