@@ -123,7 +123,7 @@ export default function ProductDetail({ params }) {
     ? 'https://machines.poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
 
-  // 產品層級 Schema.org
+  // 產品層級 Schema.org（含 offers 以符合 Google 要求）
   const productJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -138,6 +138,23 @@ export default function ProductDetail({ params }) {
     },
     manufacturer: { '@id': 'https://jeouyang.com.tw/#organization' },
     category: product.category_name,
+    offers: {
+      '@type': 'Offer',
+      url: `${domain}/products/${id}`,
+      priceCurrency: 'TWD',
+      price: Number(product.price) > 0 ? Number(product.price) : undefined,
+      availability: 'https://schema.org/InStock',
+      seller: { '@id': 'https://jeouyang.com.tw/#organization' },
+      // B2B 產品若無標價，使用 priceSpecification 表示「請洽詢」
+      ...(Number(product.price) <= 0 ? {
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          priceCurrency: 'TWD',
+          price: '0',
+          description: isEn ? 'Contact us for pricing' : '歡迎來電詢價',
+        },
+      } : {}),
+    },
   };
 
   // 麵包屑結構化資料 — 幫助 Google 搜尋結果顯示導覽路徑
