@@ -28,17 +28,13 @@ export default function AdminProducts() {
     const arr = [...list];
     [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
     setList(arr);
-    // 更新兩個產品的 sort_order
-    for (let i = 0; i < arr.length; i++) {
-      const p = arr[i];
-      if (p.sort_order !== i) {
-        const fd = new FormData();
-        fd.append('name', p.name);
-        fd.append('sort_order', i);
-        fd.append('published', p.published ? '1' : '');
-        await fetch(`/api/admin/products/${p.id}`, { method: 'PUT', body: fd });
-      }
-    }
+    // 只更新 sort_order，不動其他欄位
+    const orders = arr.map((p, i) => ({ id: p.id, sort_order: i }));
+    await fetch('/api/admin/products/reorder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orders }),
+    });
   }
 
   const [showCats, setShowCats] = useState(false);
@@ -382,7 +378,6 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
               </div>
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2"><input type="checkbox" checked={data.published !== 0} onChange={e => update('published', e.target.checked ? 1 : 0)} /> 上架</label>
-                <div><label className="label inline">排序</label><input type="number" value={data.sort_order || 0} onChange={e => update('sort_order', e.target.value)} className="input w-24 inline" /></div>
               </div>
             </div>
           )}
