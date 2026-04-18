@@ -39,23 +39,32 @@ export default function AdminProducts() {
 
   const [showCats, setShowCats] = useState(false);
   const [newCatName, setNewCatName] = useState('');
+  const [newCatNameEn, setNewCatNameEn] = useState('');
   const [editingCat, setEditingCat] = useState(null);
+  const [editCatName, setEditCatName] = useState('');
+  const [editCatNameEn, setEditCatNameEn] = useState('');
 
   async function addCat() {
     if (!newCatName.trim()) return;
     await fetch('/api/admin/categories', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newCatName.trim() }),
+      body: JSON.stringify({ name: newCatName.trim(), name_en: newCatNameEn.trim() }),
     });
     setNewCatName('');
+    setNewCatNameEn('');
     load();
   }
-  async function updateCat(id, name) {
+  function startEditCat(c) {
+    setEditingCat(c.id);
+    setEditCatName(c.name || '');
+    setEditCatNameEn(c.name_en || '');
+  }
+  async function updateCat(id) {
     await fetch(`/api/admin/categories?id=${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name: editCatName, name_en: editCatNameEn }),
     });
     setEditingCat(null);
     load();
@@ -85,39 +94,51 @@ export default function AdminProducts() {
           <h2 className="text-lg font-semibold mb-3">分類管理</h2>
           <div className="space-y-2 mb-4">
             {cats.map(c => (
-              <div key={c.id} className="flex items-center gap-3 p-2 border rounded hover:bg-gray-50">
+              <div key={c.id} className="p-3 border rounded hover:bg-gray-50">
                 {editingCat === c.id ? (
-                  <>
-                    <input
-                      defaultValue={c.name}
-                      className="input flex-1"
-                      autoFocus
-                      onKeyDown={e => { if (e.key === 'Enter') updateCat(c.id, e.target.value); if (e.key === 'Escape') setEditingCat(null); }}
-                    />
-                    <button onClick={e => updateCat(c.id, e.target.previousElementSibling.value)} className="text-green-600 hover:underline text-sm">儲存</button>
-                    <button onClick={() => setEditingCat(null)} className="text-gray-500 hover:underline text-sm">取消</button>
-                  </>
+                  <div className="space-y-2">
+                    <div className="flex">
+                      <span className="shrink-0 inline-flex items-center justify-center w-12 bg-brand text-white text-sm rounded-l">中文</span>
+                      <input value={editCatName} onChange={e => setEditCatName(e.target.value)} className="input !rounded-l-none" autoFocus />
+                    </div>
+                    <div className="flex">
+                      <span className="shrink-0 inline-flex items-center justify-center w-12 bg-gray-700 text-white text-sm rounded-l">EN</span>
+                      <input value={editCatNameEn} onChange={e => setEditCatNameEn(e.target.value)} className="input !rounded-l-none" placeholder="English name" />
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => updateCat(c.id)} className="text-green-600 hover:underline text-sm">儲存</button>
+                      <button onClick={() => setEditingCat(null)} className="text-gray-500 hover:underline text-sm">取消</button>
+                    </div>
+                  </div>
                 ) : (
-                  <>
-                    <span className="flex-1 font-medium">{c.name}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <span className="font-medium">{c.name}</span>
+                      {c.name_en && <span className="text-gray-400 text-sm ml-2">/ {c.name_en}</span>}
+                    </div>
                     <span className="text-xs text-gray-400">{list.filter(p => p.category_id === c.id).length} 個產品</span>
-                    <button onClick={() => setEditingCat(c.id)} className="text-blue-600 hover:underline text-sm">改名</button>
+                    <button onClick={() => startEditCat(c)} className="text-blue-600 hover:underline text-sm">編輯</button>
                     <button onClick={() => removeCat(c.id)} className="text-red-600 hover:underline text-sm">刪除</button>
-                  </>
+                  </div>
                 )}
               </div>
             ))}
             {!cats.length && <p className="text-gray-400 text-sm">尚無分類</p>}
           </div>
-          <div className="flex gap-2">
-            <input
-              value={newCatName}
-              onChange={e => setNewCatName(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') addCat(); }}
-              className="input flex-1"
-              placeholder="新分類名稱，例：立式加工中心"
-            />
-            <button onClick={addCat} className="btn-primary">新增分類</button>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <div className="flex flex-1">
+                <span className="shrink-0 inline-flex items-center justify-center w-12 bg-brand text-white text-sm rounded-l">中文</span>
+                <input value={newCatName} onChange={e => setNewCatName(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') addCat(); }} className="input !rounded-l-none" placeholder="新分類名稱，例：立式加工中心" />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="flex flex-1">
+                <span className="shrink-0 inline-flex items-center justify-center w-12 bg-gray-700 text-white text-sm rounded-l">EN</span>
+                <input value={newCatNameEn} onChange={e => setNewCatNameEn(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') addCat(); }} className="input !rounded-l-none" placeholder="English name, e.g. Vertical Machining Center" />
+              </div>
+              <button onClick={addCat} className="btn-primary shrink-0">新增分類</button>
+            </div>
           </div>
         </div>
       )}

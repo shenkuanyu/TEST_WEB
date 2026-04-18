@@ -8,17 +8,17 @@ export async function GET() {
 }
 
 export async function POST(req) {
-  const { name, sort_order = 0 } = await req.json();
+  const { name, name_en, sort_order = 0 } = await req.json();
   if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 });
-  const r = getDB().prepare('INSERT INTO categories (name, sort_order) VALUES (?,?)').run(name, sort_order);
+  const r = getDB().prepare('INSERT INTO categories (name, name_en, sort_order) VALUES (?,?,?)').run(name, name_en || '', sort_order);
   return NextResponse.json({ ok: true, id: r.lastInsertRowid });
 }
 
 export async function PUT(req) {
   const id = Number(new URL(req.url).searchParams.get('id'));
-  const { name } = await req.json();
+  const { name, name_en } = await req.json();
   if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 });
-  getDB().prepare('UPDATE categories SET name=? WHERE id=?').run(name, id);
+  getDB().prepare('UPDATE categories SET name=?, name_en=? WHERE id=?').run(name, name_en || '', id);
   return NextResponse.json({ ok: true });
 }
 
