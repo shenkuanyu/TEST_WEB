@@ -45,6 +45,8 @@
     "@tiptap/extension-color": "^2.6.0",
     "@tiptap/extension-text-style": "^2.6.0",
     "@tiptap/extension-image": "^2.6.0",
+    "@tiptap/extension-font-family": "^2.6.0",
+    "@tiptap/extension-highlight": "^2.6.0",
     "sharp": "^0.33.0"
   },
   "devDependencies": {
