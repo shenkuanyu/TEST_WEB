@@ -392,7 +392,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
                     setMainImgPreview(null);
                   }
                 }} />
-                <p className="mt-1 text-xs text-gray-400">建議尺寸：800 × 600 px（4:3 比例），會用於產品列表卡片縮圖</p>
+                <p className="mt-1 text-xs text-gray-400">圖片會自適應縮放，建議寬度至少 800 px，用於產品列表卡片縮圖</p>
                 {(mainImgPreview || data.image) && (
                   <img src={mainImgPreview || data.image} className="w-24 h-24 mt-2 rounded object-cover" alt="" />
                 )}
@@ -513,7 +513,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
             <div className="space-y-4">
               <div className="p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
                 這裡管理「產品相簿」（顯示在產品內頁的圖片牆）。主圖（列表縮圖）請至「基本資料」分頁設定。
-                <br /><span className="text-blue-600">建議尺寸：800 × 600 px（4:3 比例），縮圖會以正方形裁切顯示</span>
+                <br /><span className="text-blue-600">圖片會自適應縮放，建議寬度至少 800 px</span>
               </div>
               <div>
                 <label className="inline-flex items-center gap-2 cursor-pointer btn-outline">

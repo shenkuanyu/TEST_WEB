@@ -27,6 +27,9 @@ public/uploads/*
 # 若需要部署時含有，請拿掉下面這一行註解
 # data/pdftext/
 
+# 型錄資料（僅本機使用，不部署到網站）
+型錄/
+
 # 編輯器/作業系統
 .DS_Store
 .vscode/*.log
