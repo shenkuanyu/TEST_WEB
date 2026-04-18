@@ -77,8 +77,8 @@ export default async function Navbar() {
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
           <LanguageSwitcher locale={locale} />
 
-          {/* 桌機顯示 */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* 桌機顯示 — 會員功能暫時隱藏，未來需要時取消註解即可 */}
+          {/* <div className="hidden md:flex items-center gap-3">
             {member ? (
               <>
                 <span className="text-gray-500 hidden xl:inline text-sm">Hi, {member.email}</span>
@@ -96,7 +96,7 @@ export default async function Navbar() {
                 </Link>
               </>
             )}
-          </div>
+          </div> */}
 
           {/* 手機顯示：漢堡選單 */}
           <MobileNav
