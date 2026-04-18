@@ -25,12 +25,12 @@ export default function HomeProductCarousel({ products = [] }) {
             key={p.id}
             data-card
             href={`/products/${p.id}`}
-            className="group relative shrink-0 w-[280px] md:w-[380px] overflow-hidden rounded-sm snap-start bg-gray-200"
+            className="group relative shrink-0 w-[280px] md:w-[380px] aspect-[4/3] overflow-hidden rounded-sm snap-start bg-gray-200"
           >
             <img
               src={p.image || '/uploads/placeholder.svg'}
               alt={p.name}
-              className="w-full h-auto object-contain group-hover:scale-110 transition duration-700"
+              className="absolute inset-0 w-full h-full object-contain group-hover:scale-110 transition duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between">

@@ -3,11 +3,11 @@ import Link from 'next/link';
 export default function ProductCard({ product }) {
   return (
     <Link href={`/products/${product.id}`} className="card group block">
-      <div className="bg-gray-100 overflow-hidden">
+      <div className="aspect-[4/3] bg-gray-100 overflow-hidden flex items-center justify-center">
         <img
           src={product.image || '/uploads/placeholder.svg'}
           alt={product.name}
-          className="w-full h-auto object-contain group-hover:scale-105 transition duration-500"
+          className="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-500"
         />
       </div>
       <div className="p-4">
