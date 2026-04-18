@@ -340,10 +340,10 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
                 </div>
                 <div className="md:col-span-2">
                   <label className="label">產品名稱 *</label>
-                  <div className="flex"><span className="shrink-0 inline-flex items-center px-3 bg-brand text-white text-sm rounded-l">中文</span>
+                  <div className="flex"><span className="shrink-0 inline-flex items-center justify-center w-12 bg-brand text-white text-sm rounded-l">中文</span>
                     <input value={data.name || ''} onChange={e => update('name', e.target.value)} className="input !rounded-l-none" />
                   </div>
-                  <div className="flex mt-1"><span className="shrink-0 inline-flex items-center px-3 bg-gray-700 text-white text-sm rounded-l">EN</span>
+                  <div className="flex mt-1"><span className="shrink-0 inline-flex items-center justify-center w-12 bg-gray-700 text-white text-sm rounded-l">EN</span>
                     <input value={data.name_en || ''} onChange={e => update('name_en', e.target.value)} className="input !rounded-l-none" placeholder="English product name (機台站會自動加 POSHTECH 前綴)" />
                   </div>
                 </div>
@@ -353,10 +353,10 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
 
               <div>
                 <label className="label">簡介</label>
-                <div className="flex"><span className="shrink-0 inline-flex items-center px-3 bg-brand text-white text-sm rounded-l">中文</span>
+                <div className="flex"><span className="shrink-0 inline-flex items-center justify-center w-12 bg-brand text-white text-sm rounded-l">中文</span>
                   <input value={data.summary || ''} onChange={e => update('summary', e.target.value)} className="input !rounded-l-none" />
                 </div>
-                <div className="flex mt-1"><span className="shrink-0 inline-flex items-center px-3 bg-gray-700 text-white text-sm rounded-l">EN</span>
+                <div className="flex mt-1"><span className="shrink-0 inline-flex items-center justify-center w-12 bg-gray-700 text-white text-sm rounded-l">EN</span>
                   <input value={data.summary_en || ''} onChange={e => update('summary_en', e.target.value)} className="input !rounded-l-none" placeholder="English summary" />
                 </div>
               </div>

@@ -315,7 +315,7 @@ function Bilingual({ label, zhKey, enKey, data, onChange, type = 'text' }) {
       <label className="label">{label}</label>
       <div className="space-y-2">
         <div className="flex">
-          <span className="shrink-0 inline-flex items-center px-3 bg-brand text-white text-sm rounded-l">中文</span>
+          <span className="shrink-0 inline-flex items-center justify-center w-12 bg-brand text-white text-sm rounded-l">中文</span>
           <Input
             className="input !rounded-l-none"
             rows={type === 'textarea' ? 3 : undefined}
@@ -324,7 +324,7 @@ function Bilingual({ label, zhKey, enKey, data, onChange, type = 'text' }) {
           />
         </div>
         <div className="flex">
-          <span className="shrink-0 inline-flex items-center px-3 bg-gray-700 text-white text-sm rounded-l">EN</span>
+          <span className="shrink-0 inline-flex items-center justify-center w-12 bg-gray-700 text-white text-sm rounded-l">EN</span>
           <Input
             className="input !rounded-l-none"
             rows={type === 'textarea' ? 3 : undefined}
