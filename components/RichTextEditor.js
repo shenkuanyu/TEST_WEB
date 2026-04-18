@@ -89,9 +89,13 @@ export default function RichTextEditor({ value, onChange, placeholder, rows = 12
   if (!editor) return null;
 
   return (
-    <div className="border rounded-lg overflow-hidden bg-white">
-      <Toolbar editor={editor} />
-      <EditorContent editor={editor} />
+    <div className="border rounded-lg bg-white flex flex-col" style={{ maxHeight: '70vh' }}>
+      <div className="sticky top-0 z-10 bg-gray-50 shrink-0">
+        <Toolbar editor={editor} />
+      </div>
+      <div className="overflow-y-auto flex-1">
+        <EditorContent editor={editor} />
+      </div>
       <EditorStyles />
     </div>
   );
