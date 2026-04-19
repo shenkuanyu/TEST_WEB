@@ -41,19 +41,19 @@ export default function HeroCarousel({ banners = [] }) {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-gray-100"
+      className="relative w-full aspect-[16/10] sm:aspect-[16/8] md:aspect-[16/7] max-h-[70vh] overflow-hidden bg-gray-100"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
       {banners.map((b, i) => (
         <div
           key={b.id}
-          className={`${i === 0 ? 'relative' : 'absolute inset-0'} transition-opacity duration-1000 ${i === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+          className={`absolute inset-0 transition-opacity duration-1000 ${i === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
         >
           <img
             src={b.image}
             alt={b.title || ''}
-            className="w-full h-auto block"
+            className="w-full h-full object-cover object-center"
             draggable={false}
           />
           {/* 漸層遮罩：手機用由下往上，桌機用由左往右 */}
