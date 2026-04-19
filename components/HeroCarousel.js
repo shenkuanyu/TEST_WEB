@@ -51,7 +51,7 @@ export default function HeroCarousel({ banners = [] }) {
 
   return (
     <section
-      className="relative w-full aspect-[16/10] sm:aspect-[16/8] md:aspect-[16/9] overflow-hidden bg-gray-100"
+      className="relative w-full aspect-[16/10] sm:aspect-[16/8] md:aspect-[16/7] max-h-[70vh] overflow-hidden bg-gray-100"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >

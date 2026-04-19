@@ -133,7 +133,7 @@ export default function AdminBanners() {
       <div className="grid md:grid-cols-2 gap-4">
         {list.map(b => (
           <div key={b.id} className="bg-white rounded-lg overflow-hidden shadow-sm">
-            <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden">
+            <div className="relative aspect-[16/7] max-h-[70vh] bg-gray-100 overflow-hidden">
               <img
                 src={b.image}
                 alt={b.title || ''}
@@ -180,7 +180,7 @@ export default function AdminBanners() {
                     </p>
                     <div
                       ref={containerRef}
-                      className="relative aspect-[16/9] bg-gray-100 rounded overflow-hidden select-none"
+                      className="relative aspect-[16/7] max-h-[70vh] bg-gray-100 rounded overflow-hidden select-none"
                       style={{ cursor: dragging.current ? 'grabbing' : 'grab', touchAction: 'none' }}
                       onPointerDown={onPointerDown}
                       onPointerMove={onPointerMove}
