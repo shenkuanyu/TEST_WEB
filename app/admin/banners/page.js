@@ -5,12 +5,31 @@ export default function AdminBanners() {
   const [list, setList] = useState([]);
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   async function load() {
     const r = await fetch('/api/admin/banners').then(r => r.json());
     setList(r.items || []);
   }
   useEffect(() => { load(); }, []);
+
+  function openEdit(banner) {
+    setEditing(banner);
+    setPreviewUrl(banner.image || null);
+  }
+
+  function openNew() {
+    setEditing({});
+    setPreviewUrl(null);
+  }
+
+  function handleFileChange(e) {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  }
 
   async function save(e) {
     e.preventDefault();
@@ -20,7 +39,7 @@ export default function AdminBanners() {
     const method = editing?.id ? 'PUT' : 'POST';
     const r = await fetch(url, { method, body: fd });
     setLoading(false);
-    if (r.ok) { setEditing(null); load(); } else alert('儲存失敗');
+    if (r.ok) { setEditing(null); setPreviewUrl(null); load(); } else alert('儲存失敗');
   }
 
   async function remove(id) {
@@ -33,18 +52,25 @@ export default function AdminBanners() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">輪播圖管理</h1>
-        <button onClick={() => setEditing({})} className="btn-primary">+ 新增輪播圖</button>
+        <button onClick={openNew} className="btn-primary">+ 新增輪播圖</button>
       </div>
+
+      {/* 列表 — 模擬前台 16:7 顯示 */}
       <div className="grid md:grid-cols-2 gap-4">
         {list.map(b => (
           <div key={b.id} className="bg-white rounded-lg overflow-hidden shadow-sm">
-            <img src={b.image} alt={b.title || ''} className="w-full h-auto" />
+            <div className="relative aspect-[16/7] bg-gray-100 overflow-hidden">
+              <img src={b.image} alt={b.title || ''} className="absolute inset-0 w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-4">
+                {b.subtitle && <p className="text-[10px] tracking-[0.3em] text-brand font-semibold uppercase">{b.subtitle}</p>}
+                <h3 className="text-white text-lg font-light drop-shadow">{b.title || '(無標題)'}</h3>
+              </div>
+            </div>
             <div className="p-4">
-              <div className="font-medium">{b.title || '(無標題)'}</div>
-              <div className="text-sm text-gray-500">{b.subtitle}</div>
-              <div className="mt-2 text-xs text-gray-400">排序：{b.sort_order} · {b.active ? '啟用' : '停用'}</div>
-              <div className="mt-3 space-x-3 text-sm">
-                <button onClick={() => setEditing(b)} className="text-blue-600 hover:underline">編輯</button>
+              <div className="mt-1 text-xs text-gray-400">排序：{b.sort_order} · {b.active ? '啟用' : '停用'}</div>
+              <div className="mt-2 space-x-3 text-sm">
+                <button onClick={() => openEdit(b)} className="text-blue-600 hover:underline">編輯</button>
                 <button onClick={() => remove(b.id)} className="text-red-600 hover:underline">刪除</button>
               </div>
             </div>
@@ -53,9 +79,10 @@ export default function AdminBanners() {
         {!list.length && <div className="col-span-full bg-white rounded-lg p-8 text-center text-gray-400">尚無輪播圖</div>}
       </div>
 
+      {/* 編輯 Modal */}
       {editing && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <form onSubmit={save} className="p-6 space-y-4" encType="multipart/form-data">
               <h2 className="text-xl font-semibold">{editing.id ? '編輯輪播圖' : '新增輪播圖'}</h2>
               <div><label className="label">主標題</label><input name="title" defaultValue={editing.title || ''} className="input" /></div>
@@ -63,16 +90,26 @@ export default function AdminBanners() {
               <div><label className="label">連結網址</label><input name="link_url" defaultValue={editing.link_url || ''} placeholder="/products" className="input" /></div>
               <div>
                 <label className="label">圖片{!editing.id && ' *'}</label>
-                <input type="file" name="image" accept="image/*" className="input" required={!editing.id} />
+                <input type="file" name="image" accept="image/*" className="input" required={!editing.id} onChange={handleFileChange} />
                 <p className="mt-1 text-xs text-gray-400">建議尺寸：1920 × 800 px（比例約 16:7），橫幅寬圖效果最佳</p>
-                {editing.image && <img src={editing.image} className="w-full h-auto mt-2 rounded" alt="" />}
+
+                {/* 模擬前台實際顯示效果 */}
+                {previewUrl && (
+                  <div className="mt-3">
+                    <p className="text-xs text-gray-500 mb-1">前台顯示預覽：</p>
+                    <div className="relative aspect-[16/7] bg-gray-100 rounded overflow-hidden">
+                      <img src={previewUrl} className="absolute inset-0 w-full h-full object-cover" alt="預覽" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="flex gap-4 items-center">
                 <div><label className="label inline">排序</label><input type="number" name="sort_order" defaultValue={editing.sort_order || 0} className="input w-24 inline" /></div>
                 <label className="flex items-center gap-2"><input type="checkbox" name="active" defaultChecked={editing.active !== 0} value="1" /> 啟用</label>
               </div>
               <div className="flex gap-2 justify-end pt-4 border-t">
-                <button type="button" onClick={() => setEditing(null)} className="btn-outline">取消</button>
+                <button type="button" onClick={() => { setEditing(null); setPreviewUrl(null); }} className="btn-outline">取消</button>
                 <button disabled={loading} className="btn-primary disabled:opacity-50">{loading ? '儲存中…' : '儲存'}</button>
               </div>
             </form>
