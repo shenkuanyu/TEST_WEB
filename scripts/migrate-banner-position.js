@@ -22,6 +22,14 @@ for (const file of dbFiles) {
   const dbPath = path.join(dataDir, file);
   const db = new Database(dbPath);
 
+  // 檢查 banners 表是否存在
+  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='banners'").all();
+  if (tables.length === 0) {
+    console.log(`⏭ ${file} — 沒有 banners 表，略過`);
+    db.close();
+    continue;
+  }
+
   // 檢查欄位是否已存在
   const cols = db.prepare("PRAGMA table_info(banners)").all();
   const hasCol = cols.some(c => c.name === 'image_position');
