@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getDB } from '@/lib/admin-db';
 import { saveUploadedFile } from '@/lib/upload';
 
+export const dynamic = 'force-dynamic';
+
 /** 讀取頁面設定（存在 site_settings 裡，key 以 page_ 開頭） */
 export async function GET() {
   const db = getDB();
