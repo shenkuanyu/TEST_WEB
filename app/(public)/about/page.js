@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { getSiteMeta } from '@/lib/site';
 import { getLocale } from '@/lib/i18n';
+import { getDB } from '@/lib/db';
+
+export const revalidate = 60;
 
 export function generateMetadata() {
   const site = getSiteMeta();
@@ -24,7 +27,48 @@ export function generateMetadata() {
   };
 }
 
+/** 從 site_settings 取得 page_about JSON，或回傳預設值 */
+function getAboutData() {
+  const defaults = {
+    hero_subtitle: 'ABOUT JEOUYANG',
+    hero_title: '公司介紹',
+    hero_desc: '零組件標準化的專家 ｜ since 1994',
+    about_title: '用標準化思維',
+    about_highlight: '為台灣機械工業再盡一份力',
+    about_p1: '久洋機械股份有限公司創立於 1994 年 7 月，公司成立的初衷，是為台灣機械工業再添一家民營的研究設計公司，協助中小企業解決因設計研發人才短缺，而減少新產品開發、錯失商機的困境。',
+    about_p2: '經過三十餘年的累積，久洋以「零組件標準化」為核心，持續投入工具機及自動化產業所需的機械零組件研發與製造。我們的目標很明確 —— 讓客戶不必為零件再傷腦筋：減少庫存量、縮短備料期、降低成本，讓久洋成為您穩定可靠的採購夥伴。',
+    philosophy: [
+      { num: '01', title: '標準化設計', desc: '以「可重複量產」為前提做設計。零件規格穩定、品質一致，客戶不必每次重新開規格、重新驗證。' },
+      { num: '02', title: '縮短備料期', desc: '以常備庫存加上彈性製程，讓客戶從下單到交機的時間大幅縮短，真正掌握市場商機。' },
+      { num: '03', title: '降低總成本', desc: '透過標準化與規模化，讓客戶外購久洋零件比自行開發更經濟。把開發資源留給客戶的核心產品。' },
+    ],
+    stats: [
+      { number: '30+', title: '年的專業累積', desc: '自 1994 年至今，持續投入機械設計與製造。' },
+      { number: '17', title: '大產品類別', desc: '從零件到整機，為客戶提供一站式採購方案。' },
+      { number: '100%', title: '客戶導向思維', desc: '所有設計以「降低客戶總成本」為最終目標。' },
+    ],
+    milestones: [
+      { year: '1994', title: '公司成立', desc: '久洋機械股份有限公司於台中潭子創立，以「研究設計」為公司核心能力。' },
+      { year: '創立初期', title: '投入零組件標準化', desc: '鎖定台灣中小型機械廠需求，從斜楔、聯軸器、軸承座等精密零件切入，建立標準品線。' },
+      { year: '擴展期', title: '延伸至整機製造', desc: '陸續切入立式 / 臥式 / 龍門 / 動柱式加工中心，成為兼具零件與整機能力的綜合型供應商。' },
+      { year: '至今', title: '持續深耕', desc: '持續以「減少客戶庫存、縮短備料期、降低採購成本」為核心價值，服務台灣工具機與自動化產業。' },
+    ],
+  };
+
+  try {
+    const db = getDB();
+    const row = db.prepare("SELECT value FROM site_settings WHERE key='page_about'").get();
+    if (row?.value) {
+      const parsed = JSON.parse(row.value);
+      return { ...defaults, ...parsed };
+    }
+  } catch {}
+  return defaults;
+}
+
 export default function AboutPage() {
+  const d = getAboutData();
+
   return (
     <div>
       {/* Hero */}
@@ -33,9 +77,9 @@ export default function AboutPage() {
           <img src="/uploads/about.jpg" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative container text-center">
-          <p className="text-sm tracking-[0.4em] text-brand mb-4">ABOUT JEOUYANG</p>
-          <h1 className="text-4xl md:text-6xl font-light tracking-wide">公司介紹</h1>
-          <p className="mt-6 text-lg text-gray-300">零組件標準化的專家 ｜ since 1994</p>
+          <p className="text-sm tracking-[0.4em] text-brand mb-4">{d.hero_subtitle}</p>
+          <h1 className="text-4xl md:text-6xl font-light tracking-wide">{d.hero_title}</h1>
+          <p className="mt-6 text-lg text-gray-300">{d.hero_desc}</p>
         </div>
       </section>
 
@@ -48,19 +92,12 @@ export default function AboutPage() {
           <div>
             <p className="section-sub mb-3 !text-brand">ABOUT US</p>
             <h2 className="text-3xl md:text-4xl font-light mb-6 leading-snug">
-              用標準化思維<br />
-              <span className="text-brand">為台灣機械工業再盡一份力</span>
+              {d.about_title}<br />
+              <span className="text-brand">{d.about_highlight}</span>
             </h2>
             <div className="space-y-4 text-gray-600 leading-loose">
-              <p>
-                久洋機械股份有限公司創立於 1994 年 7 月，公司成立的初衷，是為台灣機械工業再添一家民營的研究設計公司，
-                協助中小企業解決因設計研發人才短缺，而減少新產品開發、錯失商機的困境。
-              </p>
-              <p>
-                經過三十餘年的累積，久洋以「零組件標準化」為核心，持續投入工具機及自動化產業所需的機械零組件研發與製造。
-                我們的目標很明確 —— 讓客戶不必為零件再傷腦筋：減少庫存量、縮短備料期、降低成本，
-                讓久洋成為您穩定可靠的採購夥伴。
-              </p>
+              <p>{d.about_p1}</p>
+              <p>{d.about_p2}</p>
             </div>
           </div>
         </div>
@@ -74,15 +111,11 @@ export default function AboutPage() {
             <h2 className="section-title">經營理念</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { num: '01', t: '標準化設計', d: '以「可重複量產」為前提做設計。零件規格穩定、品質一致，客戶不必每次重新開規格、重新驗證。' },
-              { num: '02', t: '縮短備料期', d: '以常備庫存加上彈性製程，讓客戶從下單到交機的時間大幅縮短，真正掌握市場商機。' },
-              { num: '03', t: '降低總成本', d: '透過標準化與規模化，讓客戶外購久洋零件比自行開發更經濟。把開發資源留給客戶的核心產品。' },
-            ].map((x) => (
+            {d.philosophy.map((x) => (
               <div key={x.num} className="bg-white p-8 rounded-lg border-t-4 border-brand shadow-sm">
                 <div className="text-brand text-4xl font-light mb-4">{x.num}</div>
-                <div className="text-xl font-semibold mb-3 text-gray-900">{x.t}</div>
-                <p className="text-gray-500 leading-relaxed">{x.d}</p>
+                <div className="text-xl font-semibold mb-3 text-gray-900">{x.title}</div>
+                <p className="text-gray-500 leading-relaxed">{x.desc}</p>
               </div>
             ))}
           </div>
@@ -121,15 +154,11 @@ export default function AboutPage() {
       {/* 品質與技術 */}
       <section className="bg-gray-900 text-white py-20">
         <div className="container grid md:grid-cols-3 gap-8 text-center">
-          {[
-            { n: '30+', t: '年的專業累積', d: '自 1994 年至今，持續投入機械設計與製造。' },
-            { n: '17', t: '大產品類別', d: '從零件到整機，為客戶提供一站式採購方案。' },
-            { n: '100%', t: '客戶導向思維', d: '所有設計以「降低客戶總成本」為最終目標。' },
-          ].map(x => (
-            <div key={x.t}>
-              <div className="text-5xl md:text-6xl font-light text-brand mb-3">{x.n}</div>
-              <div className="text-xl font-semibold mb-2">{x.t}</div>
-              <p className="text-gray-400 text-sm leading-relaxed">{x.d}</p>
+          {d.stats.map(x => (
+            <div key={x.title}>
+              <div className="text-5xl md:text-6xl font-light text-brand mb-3">{x.number}</div>
+              <div className="text-xl font-semibold mb-2">{x.title}</div>
+              <p className="text-gray-400 text-sm leading-relaxed">{x.desc}</p>
             </div>
           ))}
         </div>
@@ -143,18 +172,13 @@ export default function AboutPage() {
         </div>
         <div className="max-w-3xl mx-auto space-y-8 relative">
           <div className="absolute left-[5.5rem] top-2 bottom-2 w-px bg-brand/30" />
-          {[
-            { y: '1994', t: '公司成立', d: '久洋機械股份有限公司於台中潭子創立，以「研究設計」為公司核心能力。' },
-            { y: '創立初期', t: '投入零組件標準化', d: '鎖定台灣中小型機械廠需求，從斜楔、聯軸器、軸承座等精密零件切入，建立標準品線。' },
-            { y: '擴展期', t: '延伸至整機製造', d: '陸續切入立式 / 臥式 / 龍門 / 動柱式加工中心，成為兼具零件與整機能力的綜合型供應商。' },
-            { y: '至今', t: '持續深耕', d: '持續以「減少客戶庫存、縮短備料期、降低採購成本」為核心價值，服務台灣工具機與自動化產業。' },
-          ].map((m) => (
-            <div key={m.y} className="flex gap-6 items-start relative">
-              <div className="text-brand font-bold text-lg w-24 shrink-0 pt-1">{m.y}</div>
+          {d.milestones.map((m) => (
+            <div key={m.year} className="flex gap-6 items-start relative">
+              <div className="text-brand font-bold text-lg w-24 shrink-0 pt-1">{m.year}</div>
               <div className="w-3 h-3 rounded-full bg-brand shrink-0 mt-2 relative z-10" />
               <div className="flex-1 pb-4">
-                <div className="font-semibold text-gray-900 mb-1">{m.t}</div>
-                <p className="text-gray-600 leading-relaxed">{m.d}</p>
+                <div className="font-semibold text-gray-900 mb-1">{m.title}</div>
+                <p className="text-gray-600 leading-relaxed">{m.desc}</p>
               </div>
             </div>
           ))}

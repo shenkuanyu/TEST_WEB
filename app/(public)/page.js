@@ -24,8 +24,16 @@ export default function Home() {
   const settings = {};
   db.prepare('SELECT key, value FROM site_settings').all().forEach(r => (settings[r.key] = r.value));
 
-  // 首頁 3 格圖卡（依網站切換機台 / 零組件的圖）
-  const aboutTiles = site.hero_tiles.map(t => ({
+  // 首頁 3 格圖卡：優先使用後台設定，fallback 到 site.js
+  let heroTilesData = site.hero_tiles;
+  try {
+    const row = db.prepare("SELECT value FROM site_settings WHERE key='page_hero_tiles'").get();
+    if (row?.value) {
+      const parsed = JSON.parse(row.value);
+      if (Array.isArray(parsed) && parsed.length && parsed[0].img) heroTilesData = parsed;
+    }
+  } catch {}
+  const aboutTiles = heroTilesData.map(t => ({
     img: t.img,
     label: isEn ? t.label_en : t.label_zh,
   }));

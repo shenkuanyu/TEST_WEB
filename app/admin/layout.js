@@ -60,6 +60,7 @@ export default async function AdminLayout({ children }) {
           <NavLink href="/admin/news">最新消息</NavLink>
           <NavLink href="/admin/contacts">聯絡人</NavLink>
           <NavLink href="/admin/orders">訂單 / 詢問</NavLink>
+          <NavLink href="/admin/pages">頁面管理</NavLink>
           <NavLink href="/admin/settings">網站設定</NavLink>
         </nav>
 
