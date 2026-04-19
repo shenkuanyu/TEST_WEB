@@ -53,7 +53,8 @@ export default function HeroCarousel({ banners = [] }) {
           <img
             src={b.image}
             alt={b.title || ''}
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover"
+            style={{ objectPosition: b.image_position || 'center' }}
             draggable={false}
           />
           {/* 漸層遮罩：手機用由下往上，桌機用由左往右 */}

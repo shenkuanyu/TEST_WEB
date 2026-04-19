@@ -17,8 +17,8 @@ export async function POST(req) {
   const imagePath = await saveUploadedFile(file);
 
   const r = getDB().prepare(`
-    INSERT INTO banners (title, subtitle, link_url, image, sort_order, active)
-    VALUES (?,?,?,?,?,?)
+    INSERT INTO banners (title, subtitle, link_url, image, sort_order, active, image_position)
+    VALUES (?,?,?,?,?,?,?)
   `).run(
     fd.get('title') || null,
     fd.get('subtitle') || null,
@@ -26,6 +26,7 @@ export async function POST(req) {
     imagePath,
     Number(fd.get('sort_order') || 0),
     fd.get('active') ? 1 : 0,
+    fd.get('image_position') || 'center',
   );
   return NextResponse.json({ ok: true, id: r.lastInsertRowid });
 }

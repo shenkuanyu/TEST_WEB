@@ -14,7 +14,7 @@ export async function PUT(req, { params }) {
   if (file && typeof file !== 'string' && file.size > 0) imagePath = await saveUploadedFile(file);
 
   db.prepare(`
-    UPDATE banners SET title=?, subtitle=?, link_url=?, image=?, sort_order=?, active=? WHERE id=?
+    UPDATE banners SET title=?, subtitle=?, link_url=?, image=?, sort_order=?, active=?, image_position=? WHERE id=?
   `).run(
     fd.get('title') || null,
     fd.get('subtitle') || null,
@@ -22,6 +22,7 @@ export async function PUT(req, { params }) {
     imagePath,
     Number(fd.get('sort_order') || 0),
     fd.get('active') ? 1 : 0,
+    fd.get('image_position') || 'center',
     id,
   );
   return NextResponse.json({ ok: true });

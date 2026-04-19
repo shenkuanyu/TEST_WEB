@@ -1,11 +1,24 @@
 'use client';
 import { useEffect, useState } from 'react';
 
+const POSITION_OPTIONS = [
+  { value: 'left top',     label: '↖' },
+  { value: 'center top',   label: '↑' },
+  { value: 'right top',    label: '↗' },
+  { value: 'left center',  label: '←' },
+  { value: 'center',       label: '●' },
+  { value: 'right center', label: '→' },
+  { value: 'left bottom',  label: '↙' },
+  { value: 'center bottom',label: '↓' },
+  { value: 'right bottom', label: '↘' },
+];
+
 export default function AdminBanners() {
   const [list, setList] = useState([]);
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [imgPos, setImgPos] = useState('center');
 
   async function load() {
     const r = await fetch('/api/admin/banners').then(r => r.json());
@@ -16,11 +29,13 @@ export default function AdminBanners() {
   function openEdit(banner) {
     setEditing(banner);
     setPreviewUrl(banner.image || null);
+    setImgPos(banner.image_position || 'center');
   }
 
   function openNew() {
     setEditing({});
     setPreviewUrl(null);
+    setImgPos('center');
   }
 
   function handleFileChange(e) {
@@ -35,6 +50,7 @@ export default function AdminBanners() {
     e.preventDefault();
     setLoading(true);
     const fd = new FormData(e.currentTarget);
+    fd.set('image_position', imgPos);
     const url = editing?.id ? `/api/admin/banners/${editing.id}` : '/api/admin/banners';
     const method = editing?.id ? 'PUT' : 'POST';
     const r = await fetch(url, { method, body: fd });
@@ -60,7 +76,12 @@ export default function AdminBanners() {
         {list.map(b => (
           <div key={b.id} className="bg-white rounded-lg overflow-hidden shadow-sm">
             <div className="relative aspect-[16/7] bg-gray-100 overflow-hidden">
-              <img src={b.image} alt={b.title || ''} className="absolute inset-0 w-full h-full object-cover" />
+              <img
+                src={b.image}
+                alt={b.title || ''}
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: b.image_position || 'center' }}
+              />
               <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 p-4">
                 {b.subtitle && <p className="text-[10px] tracking-[0.3em] text-brand font-semibold uppercase">{b.subtitle}</p>}
@@ -68,7 +89,7 @@ export default function AdminBanners() {
               </div>
             </div>
             <div className="p-4">
-              <div className="mt-1 text-xs text-gray-400">排序：{b.sort_order} · {b.active ? '啟用' : '停用'}</div>
+              <div className="mt-1 text-xs text-gray-400">排序：{b.sort_order} · {b.active ? '啟用' : '停用'} · 位置：{b.image_position || 'center'}</div>
               <div className="mt-2 space-x-3 text-sm">
                 <button onClick={() => openEdit(b)} className="text-blue-600 hover:underline">編輯</button>
                 <button onClick={() => remove(b.id)} className="text-red-600 hover:underline">刪除</button>
@@ -98,12 +119,44 @@ export default function AdminBanners() {
                   <div className="mt-3">
                     <p className="text-xs text-gray-500 mb-1">前台顯示預覽：</p>
                     <div className="relative aspect-[16/7] bg-gray-100 rounded overflow-hidden">
-                      <img src={previewUrl} className="absolute inset-0 w-full h-full object-cover" alt="預覽" />
+                      <img
+                        src={previewUrl}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        style={{ objectPosition: imgPos }}
+                        alt="預覽"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
                     </div>
                   </div>
                 )}
               </div>
+
+              {/* 圖片位置選擇器 */}
+              {previewUrl && (
+                <div>
+                  <label className="label">圖片焦點位置</label>
+                  <p className="text-xs text-gray-400 mb-2">當圖片比例與 16:7 不符時，選擇要顯示的重點區域</p>
+                  <div className="inline-grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded">
+                    {POSITION_OPTIONS.map(opt => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setImgPos(opt.value)}
+                        className={`w-10 h-10 rounded text-sm font-bold flex items-center justify-center transition-all ${
+                          imgPos === opt.value
+                            ? 'bg-blue-600 text-white shadow'
+                            : 'bg-white text-gray-500 hover:bg-gray-200'
+                        }`}
+                        title={opt.value}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-400">目前：{imgPos}</p>
+                </div>
+              )}
+
               <div className="flex gap-4 items-center">
                 <div><label className="label inline">排序</label><input type="number" name="sort_order" defaultValue={editing.sort_order || 0} className="input w-24 inline" /></div>
                 <label className="flex items-center gap-2"><input type="checkbox" name="active" defaultChecked={editing.active !== 0} value="1" /> 啟用</label>

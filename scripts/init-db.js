@@ -105,7 +105,8 @@ CREATE TABLE IF NOT EXISTS banners (
   image TEXT NOT NULL,
   link_url TEXT,
   sort_order INTEGER DEFAULT 0,
-  active INTEGER DEFAULT 1
+  active INTEGER DEFAULT 1,
+  image_position TEXT DEFAULT 'center'
 );
 
 CREATE TABLE IF NOT EXISTS orders (
