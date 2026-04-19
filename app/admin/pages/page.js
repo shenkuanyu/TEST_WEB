@@ -116,11 +116,19 @@ function ImagePositionPicker({ src, position, onChange, aspectRatio = '3/5' }) {
   );
 }
 
+/* ═══════ 解析 "30% 70%" → {x,y} ═══════ */
+function parsePos(str) {
+  const parts = (str || '50% 50%').replace(/%/g, '').trim().split(/\s+/);
+  return { x: Number(parts[0]) || 50, y: Number(parts[1]) || 50 };
+}
+function posToStr(pos) {
+  return `${Math.round(pos.x)}% ${Math.round(pos.y)}%`;
+}
+
 /* ═══════ 首頁圖卡編輯器 ═══════ */
 function HeroTilesEditor({ data, onSave, saving }) {
   const [lang, setLang] = useState('zh');
 
-  // 預設值（從 site.js 搬過來）
   const defaultTiles = [
     { img: '/uploads/products/JC400/JC400-01.jpg', label_zh: '精密雕銑', label_en: 'Precision Engraving', img_position: '50% 50%' },
     { img: '/uploads/products/JM200/JM200-01.jpg', label_zh: '穩定性能', label_en: 'Proven Performance', img_position: '50% 50%' },
@@ -128,15 +136,10 @@ function HeroTilesEditor({ data, onSave, saving }) {
   ];
 
   const [tiles, setTiles] = useState(defaultTiles);
-  const [positions, setPositions] = useState(defaultTiles.map(() => ({ x: 50, y: 50 })));
 
   useEffect(() => {
     if (data.page_hero_tiles && Array.isArray(data.page_hero_tiles) && data.page_hero_tiles.length) {
-      setTiles(data.page_hero_tiles);
-      setPositions(data.page_hero_tiles.map(t => {
-        const parts = (t.img_position || '50% 50%').replace(/%/g, '').split(/\s+/);
-        return { x: Number(parts[0]) || 50, y: Number(parts[1]) || 50 };
-      }));
+      setTiles(data.page_hero_tiles.map(t => ({ ...t, img_position: t.img_position || '50% 50%' })));
     }
   }, [data]);
 
@@ -144,8 +147,13 @@ function HeroTilesEditor({ data, onSave, saving }) {
     setTiles(prev => prev.map((t, i) => i === idx ? { ...t, [field]: value } : t));
   }
 
-  function updatePosition(idx, fn) {
-    setPositions(prev => prev.map((p, i) => i === idx ? fn(p) : p));
+  function updateTilePosition(idx, fn) {
+    setTiles(prev => prev.map((t, i) => {
+      if (i !== idx) return t;
+      const cur = parsePos(t.img_position);
+      const next = fn(cur);
+      return { ...t, img_position: posToStr(next) };
+    }));
   }
 
   async function uploadImage(idx, e) {
@@ -158,16 +166,12 @@ function HeroTilesEditor({ data, onSave, saving }) {
     const result = await r.json();
     if (result.path) {
       updateTile(idx, 'img', result.path);
-      updatePosition(idx, () => ({ x: 50, y: 50 }));
+      updateTile(idx, 'img_position', '50% 50%');
     }
   }
 
   function handleSave() {
-    const tilesWithPos = tiles.map((t, i) => ({
-      ...t,
-      img_position: `${Math.round(positions[i].x)}% ${Math.round(positions[i].y)}%`,
-    }));
-    onSave({ page_hero_tiles: tilesWithPos });
+    onSave({ page_hero_tiles: tiles });
   }
 
   return (
@@ -180,12 +184,11 @@ function HeroTilesEditor({ data, onSave, saving }) {
         {tiles.map((tile, idx) => (
           <div key={idx} className="bg-white rounded-lg border p-3 space-y-2">
             <div className="text-xs font-medium text-gray-500">圖卡 {idx + 1}</div>
-            {/* 預覽 — 可拖拉 */}
             {tile.img ? (
               <ImagePositionPicker
                 src={tile.img}
-                position={positions[idx]}
-                onChange={fn => updatePosition(idx, fn)}
+                position={parsePos(tile.img_position)}
+                onChange={fn => updateTilePosition(idx, fn)}
                 aspectRatio="3/5"
               />
             ) : (
