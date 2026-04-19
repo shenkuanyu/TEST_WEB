@@ -198,7 +198,9 @@ export default function Home() {
             <div className="bg-white rounded-lg shadow-sm border-l-4 border-brand p-6 md:p-10 grid md:grid-cols-[1fr_auto] gap-6 items-center">
               <div>
                 <p className="text-xs md:text-sm tracking-[0.3em] text-brand font-semibold mb-2">
-                  {isEn ? 'ALSO FROM JEOUYANG' : '同公司另一個網站'}
+                  {site.code === 'machines'
+                    ? (isEn ? 'NEED COMPONENTS?' : '需要零組件嗎?')
+                    : (isEn ? 'NEED EQUIPMENT?' : '需要設備嗎?')}
                 </p>
                 <h3 className="text-2xl md:text-3xl font-light text-gray-900 mb-3">
                   {isEn ? site.other_site.name_en : site.other_site.name_zh}
