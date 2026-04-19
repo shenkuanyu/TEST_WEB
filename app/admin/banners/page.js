@@ -133,7 +133,7 @@ export default function AdminBanners() {
       <div className="grid md:grid-cols-2 gap-4">
         {list.map(b => (
           <div key={b.id} className="bg-white rounded-lg overflow-hidden shadow-sm">
-            <div className="relative aspect-[16/7] max-h-[70vh] bg-gray-100 overflow-hidden">
+            <div className="relative aspect-[12/5] bg-gray-100 overflow-hidden">
               <img
                 src={b.image}
                 alt={b.title || ''}
@@ -170,7 +170,7 @@ export default function AdminBanners() {
               <div>
                 <label className="label">圖片{!editing.id && ' *'}</label>
                 <input type="file" name="image" accept="image/*" className="input" required={!editing.id} onChange={handleFileChange} />
-                <p className="mt-1 text-xs text-gray-400">建議尺寸：1920 × 800 px（比例約 16:7），橫幅寬圖效果最佳</p>
+                <p className="mt-1 text-xs text-gray-400">建議尺寸：1920 × 800 px（比例 12:5），橫幅寬圖效果最佳</p>
 
                 {/* 可拖拉 + 縮放的前台預覽 */}
                 {previewUrl && (
@@ -180,7 +180,7 @@ export default function AdminBanners() {
                     </p>
                     <div
                       ref={containerRef}
-                      className="relative aspect-[16/7] max-h-[70vh] bg-gray-100 rounded overflow-hidden select-none"
+                      className="relative aspect-[12/5] bg-gray-100 rounded overflow-hidden select-none"
                       style={{ cursor: dragging.current ? 'grabbing' : 'grab', touchAction: 'none' }}
                       onPointerDown={onPointerDown}
                       onPointerMove={onPointerMove}
