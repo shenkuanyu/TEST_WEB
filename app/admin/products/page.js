@@ -394,7 +394,16 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
                 }} />
                 <p className="mt-1 text-xs text-gray-400">圖片會自適應縮放，建議寬度至少 800 px，用於產品列表卡片縮圖</p>
                 {(mainImgPreview || data.image) && (
-                  <img src={mainImgPreview || data.image} className="w-24 h-24 mt-2 rounded object-cover" alt="" />
+                  <div className="mt-2 w-48">
+                    <p className="text-xs text-gray-500 mb-1">前台顯示預覽</p>
+                    <div className="relative aspect-[4/3] bg-gray-100 rounded overflow-hidden">
+                      <img
+                        src={mainImgPreview || data.image}
+                        className="absolute inset-0 w-full h-full object-contain"
+                        alt=""
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
               <div className="flex items-center gap-4">
@@ -663,3 +672,4 @@ function extractYouTubeId(url) {
   const m = String(url).match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
   return m ? m[1] : null;
 }
+

@@ -27,47 +27,67 @@ export function generateMetadata() {
   };
 }
 
-/** 從 site_settings 取得 page_about JSON，或回傳預設值 */
-function getAboutData() {
-  const defaults = {
-    hero_subtitle: 'ABOUT JEOUYANG',
-    hero_title: '公司介紹',
-    hero_desc: '零組件標準化的專家 ｜ since 1994',
-    about_title: '用標準化思維',
-    about_highlight: '為台灣機械工業再盡一份力',
-    about_p1: '久洋機械股份有限公司創立於 1994 年 7 月，公司成立的初衷，是為台灣機械工業再添一家民營的研究設計公司，協助中小企業解決因設計研發人才短缺，而減少新產品開發、錯失商機的困境。',
-    about_p2: '經過三十餘年的累積，久洋以「零組件標準化」為核心，持續投入工具機及自動化產業所需的機械零組件研發與製造。我們的目標很明確 —— 讓客戶不必為零件再傷腦筋：減少庫存量、縮短備料期、降低成本，讓久洋成為您穩定可靠的採購夥伴。',
-    philosophy: [
-      { num: '01', title: '標準化設計', desc: '以「可重複量產」為前提做設計。零件規格穩定、品質一致，客戶不必每次重新開規格、重新驗證。' },
-      { num: '02', title: '縮短備料期', desc: '以常備庫存加上彈性製程，讓客戶從下單到交機的時間大幅縮短，真正掌握市場商機。' },
-      { num: '03', title: '降低總成本', desc: '透過標準化與規模化，讓客戶外購久洋零件比自行開發更經濟。把開發資源留給客戶的核心產品。' },
-    ],
-    stats: [
-      { number: '30+', title: '年的專業累積', desc: '自 1994 年至今，持續投入機械設計與製造。' },
-      { number: '17', title: '大產品類別', desc: '從零件到整機，為客戶提供一站式採購方案。' },
-      { number: '100%', title: '客戶導向思維', desc: '所有設計以「降低客戶總成本」為最終目標。' },
-    ],
-    milestones: [
-      { year: '1994', title: '公司成立', desc: '久洋機械股份有限公司於台中潭子創立，以「研究設計」為公司核心能力。' },
-      { year: '創立初期', title: '投入零組件標準化', desc: '鎖定台灣中小型機械廠需求，從斜楔、聯軸器、軸承座等精密零件切入，建立標準品線。' },
-      { year: '擴展期', title: '延伸至整機製造', desc: '陸續切入立式 / 臥式 / 龍門 / 動柱式加工中心，成為兼具零件與整機能力的綜合型供應商。' },
-      { year: '至今', title: '持續深耕', desc: '持續以「減少客戶庫存、縮短備料期、降低採購成本」為核心價值，服務台灣工具機與自動化產業。' },
-    ],
+/** 從 site_settings 取得 page_about JSON，依語言回傳對應欄位 */
+function getAboutData(locale) {
+  const isEn = locale === 'en';
+  const s = (key, d) => {
+    if (isEn) return d[`${key}_en`] || d[key] || '';
+    return d[key] || '';
   };
 
-  try {
-    const db = getDB();
-    const row = db.prepare("SELECT value FROM site_settings WHERE key='page_about'").get();
-    if (row?.value) {
-      const parsed = JSON.parse(row.value);
-      return { ...defaults, ...parsed };
-    }
-  } catch {}
-  return defaults;
+  const raw = (() => {
+    const defaults = {
+      hero_subtitle: 'ABOUT JEOUYANG', hero_subtitle_en: 'ABOUT JEOUYANG',
+      hero_title: '公司介紹', hero_title_en: 'About Us',
+      hero_desc: '零組件標準化的專家 ｜ since 1994', hero_desc_en: 'Standardization Expert | since 1994',
+      about_title: '用標準化思維', about_title_en: 'Standardized Thinking',
+      about_highlight: '為台灣機械工業再盡一份力', about_highlight_en: "Empowering Taiwan's Machinery Industry",
+      about_p1: '久洋機械股份有限公司創立於 1994 年 7 月，公司成立的初衷，是為台灣機械工業再添一家民營的研究設計公司，協助中小企業解決因設計研發人才短缺，而減少新產品開發、錯失商機的困境。',
+      about_p1_en: "Jeouyang Machinery Co., Ltd. was founded in July 1994 with the mission of adding a privately-owned R&D company to Taiwan's machinery industry.",
+      about_p2: '經過三十餘年的累積，久洋以「零組件標準化」為核心，持續投入工具機及自動化產業所需的機械零組件研發與製造。我們的目標很明確 —— 讓客戶不必為零件再傷腦筋：減少庫存量、縮短備料期、降低成本，讓久洋成為您穩定可靠的採購夥伴。',
+      about_p2_en: 'Over 30 years, Jeouyang has focused on standardizing components for the machine tool industry, helping customers reduce inventory, shorten lead times, and lower costs.',
+      philosophy: [
+        { num: '01', title: '標準化設計', title_en: 'Standardized Design', desc: '以「可重複量產」為前提做設計。零件規格穩定、品質一致，客戶不必每次重新開規格、重新驗證。', desc_en: 'Design for mass reproduction with stable specs and consistent quality.' },
+        { num: '02', title: '縮短備料期', title_en: 'Shorter Lead Time', desc: '以常備庫存加上彈性製程，讓客戶從下單到交機的時間大幅縮短，真正掌握市場商機。', desc_en: 'Ready stock plus flexible processes dramatically reduce delivery time.' },
+        { num: '03', title: '降低總成本', title_en: 'Lower Total Cost', desc: '透過標準化與規模化，讓客戶外購久洋零件比自行開發更經濟。把開發資源留給客戶的核心產品。', desc_en: 'Standardization at scale makes outsourcing more economical.' },
+      ],
+      stats: [
+        { number: '30+', title: '年的專業累積', title_en: 'Years of Expertise', desc: '自 1994 年至今，持續投入機械設計與製造。', desc_en: 'Continuous investment in machinery design since 1994.' },
+        { number: '17', title: '大產品類別', title_en: 'Product Categories', desc: '從零件到整機，為客戶提供一站式採購方案。', desc_en: 'From components to complete machines.' },
+        { number: '100%', title: '客戶導向思維', title_en: 'Customer-Oriented', desc: '所有設計以「降低客戶總成本」為最終目標。', desc_en: 'Every design aims to minimize total customer cost.' },
+      ],
+      milestones: [
+        { year: '1994', title: '公司成立', title_en: 'Founded', desc: '久洋機械股份有限公司於台中潭子創立，以「研究設計」為公司核心能力。', desc_en: 'Jeouyang Machinery established in Tanzih, Taichung.' },
+        { year: '創立初期', title: '投入零組件標準化', title_en: 'Component Standardization', desc: '鎖定台灣中小型機械廠需求，從斜楔、聯軸器、軸承座等精密零件切入，建立標準品線。', desc_en: 'Focused on wedges, couplings, and bearing housings.' },
+        { year: '擴展期', title: '延伸至整機製造', title_en: 'Machine Manufacturing', desc: '陸續切入立式 / 臥式 / 龍門 / 動柱式加工中心，成為兼具零件與整機能力的綜合型供應商。', desc_en: 'Expanded into machining centers.' },
+        { year: '至今', title: '持續深耕', title_en: 'Continuous Growth', desc: '持續以「減少客戶庫存、縮短備料期、降低採購成本」為核心價值，服務台灣工具機與自動化產業。', desc_en: "Serving Taiwan's machine tool industry." },
+      ],
+    };
+    try {
+      const db = getDB();
+      const row = db.prepare("SELECT value FROM site_settings WHERE key='page_about'").get();
+      if (row?.value) return { ...defaults, ...JSON.parse(row.value) };
+    } catch {}
+    return defaults;
+  })();
+
+  return {
+    hero_subtitle: s('hero_subtitle', raw),
+    hero_title: s('hero_title', raw),
+    hero_desc: s('hero_desc', raw),
+    about_title: s('about_title', raw),
+    about_highlight: s('about_highlight', raw),
+    about_p1: s('about_p1', raw),
+    about_p2: s('about_p2', raw),
+    philosophy: raw.philosophy.map(p => ({ num: p.num, title: isEn ? (p.title_en || p.title) : p.title, desc: isEn ? (p.desc_en || p.desc) : p.desc })),
+    stats: raw.stats.map(st => ({ number: st.number, title: isEn ? (st.title_en || st.title) : st.title, desc: isEn ? (st.desc_en || st.desc) : st.desc })),
+    milestones: raw.milestones.map(m => ({ year: m.year, title: isEn ? (m.title_en || m.title) : m.title, desc: isEn ? (m.desc_en || m.desc) : m.desc })),
+  };
 }
 
 export default function AboutPage() {
-  const d = getAboutData();
+  const locale = getLocale();
+  const d = getAboutData(locale);
 
   return (
     <div>

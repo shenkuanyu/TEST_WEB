@@ -56,11 +56,11 @@ export default async function AdminLayout({ children }) {
         <nav className="flex-1 px-2 py-4 space-y-1 text-[24px]">
           <NavLink href="/admin">主頁</NavLink>
           <NavLink href="/admin/banners">主頁輪播</NavLink>
+          <NavLink href="/admin/pages">頁面管理</NavLink>
           <NavLink href="/admin/products">產品管理</NavLink>
           <NavLink href="/admin/news">最新消息</NavLink>
           <NavLink href="/admin/contacts">聯絡人</NavLink>
           <NavLink href="/admin/orders">訂單 / 詢問</NavLink>
-          <NavLink href="/admin/pages">頁面管理</NavLink>
           <NavLink href="/admin/settings">網站設定</NavLink>
         </nav>
 
