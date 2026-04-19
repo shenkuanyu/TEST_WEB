@@ -2,6 +2,16 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 
+/** 解析 "50% 30% 1.2" → { pos, scale } */
+function parseImagePos(str) {
+  if (!str) return { pos: 'center', scale: 1 };
+  const parts = str.replace(/%/g, '').trim().split(/\s+/);
+  const x = parts[0] || '50';
+  const y = parts[1] || '50';
+  const scale = Number(parts[2]) || 1;
+  return { pos: `${x}% ${y}%`, scale };
+}
+
 export default function HeroCarousel({ banners = [] }) {
   const [idx, setIdx] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
@@ -54,7 +64,12 @@ export default function HeroCarousel({ banners = [] }) {
             src={b.image}
             alt={b.title || ''}
             className="w-full h-full object-cover"
-            style={{ objectPosition: b.image_position || 'center' }}
+            style={{
+              objectPosition: parseImagePos(b.image_position).pos,
+              transform: parseImagePos(b.image_position).scale !== 1
+                ? `scale(${parseImagePos(b.image_position).scale})`
+                : undefined,
+            }}
             draggable={false}
           />
           {/* 漸層遮罩：手機用由下往上，桌機用由左往右 */}

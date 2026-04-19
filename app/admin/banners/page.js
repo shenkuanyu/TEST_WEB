@@ -7,11 +7,11 @@ export default function AdminBanners() {
   const [loading, setLoading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [imgPos, setImgPos] = useState({ x: 50, y: 50 });
+  const [imgScale, setImgScale] = useState(1);
 
-  // 拖拉相關
   const dragging = useRef(false);
+  const lastPoint = useRef({ x: 0, y: 0 });
   const containerRef = useRef(null);
-  const naturalSize = useRef({ w: 0, h: 0 });
 
   async function load() {
     const r = await fetch('/api/admin/banners').then(r => r.json());
@@ -19,23 +19,30 @@ export default function AdminBanners() {
   }
   useEffect(() => { load(); }, []);
 
-  /** 把 "30% 70%" 格式解析成 {x, y} */
+  /** 解析 "50% 30% 1.2" → { x, y, scale } */
   function parsePos(str) {
-    if (!str) return { x: 50, y: 50 };
+    if (!str) return { x: 50, y: 50, scale: 1 };
     const parts = str.replace(/%/g, '').trim().split(/\s+/);
-    return { x: Number(parts[0]) || 50, y: Number(parts[1] ?? parts[0]) || 50 };
+    return {
+      x: Number(parts[0]) || 50,
+      y: Number(parts[1] ?? parts[0]) || 50,
+      scale: Number(parts[2]) || 1,
+    };
   }
 
   function openEdit(banner) {
     setEditing(banner);
     setPreviewUrl(banner.image || null);
-    setImgPos(parsePos(banner.image_position));
+    const p = parsePos(banner.image_position);
+    setImgPos({ x: p.x, y: p.y });
+    setImgScale(p.scale);
   }
 
   function openNew() {
     setEditing({});
     setPreviewUrl(null);
     setImgPos({ x: 50, y: 50 });
+    setImgScale(1);
   }
 
   function handleFileChange(e) {
@@ -44,49 +51,49 @@ export default function AdminBanners() {
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
       setImgPos({ x: 50, y: 50 });
+      setImgScale(1);
     }
   }
 
-  /** 圖片載入後記錄原始尺寸，用於判斷可拖拉方向 */
-  function handleImgLoad(e) {
-    naturalSize.current = { w: e.target.naturalWidth, h: e.target.naturalHeight };
-  }
-
-  /** 拖拉開始 */
+  /* ── 拖拉邏輯（差值移動，不受方向限制） ── */
   const onPointerDown = useCallback((e) => {
     e.preventDefault();
     dragging.current = true;
+    lastPoint.current = { x: e.clientX, y: e.clientY };
     containerRef.current?.setPointerCapture(e.pointerId);
   }, []);
 
-  /** 拖拉中 — 計算位置百分比 */
   const onPointerMove = useCallback((e) => {
     if (!dragging.current || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const nat = naturalSize.current;
-    if (!nat.w || !nat.h) return;
 
-    // 容器比例 vs 圖片比例，判斷哪個方向可移動
-    const containerRatio = rect.width / rect.height;
-    const imgRatio = nat.w / nat.h;
+    // 差值移動：滑鼠移動多少 px → 換算成百分比
+    const dx = ((e.clientX - lastPoint.current.x) / rect.width) * 100;
+    const dy = ((e.clientY - lastPoint.current.y) / rect.height) * 100;
+    lastPoint.current = { x: e.clientX, y: e.clientY };
 
-    // 游標在容器內的相對位置 (0~100)
-    const px = ((e.clientX - rect.left) / rect.width) * 100;
-    const py = ((e.clientY - rect.top) / rect.height) * 100;
-
+    // 反向：滑鼠往右拖 → 圖片焦點往左移
     setImgPos(prev => ({
-      // 圖片比容器寬 → 可左右移動；比容器高 → 可上下移動
-      x: imgRatio > containerRatio ? Math.max(0, Math.min(100, px)) : prev.x,
-      y: imgRatio <= containerRatio ? Math.max(0, Math.min(100, py)) : prev.y,
+      x: Math.max(0, Math.min(100, prev.x - dx)),
+      y: Math.max(0, Math.min(100, prev.y - dy)),
     }));
   }, []);
 
-  /** 拖拉結束 */
   const onPointerUp = useCallback(() => {
     dragging.current = false;
   }, []);
 
-  const posStr = `${Math.round(imgPos.x)}% ${Math.round(imgPos.y)}%`;
+  /* ── 滾輪縮放 ── */
+  const onWheel = useCallback((e) => {
+    e.preventDefault();
+    setImgScale(prev => {
+      const delta = e.deltaY > 0 ? -0.05 : 0.05;
+      return Math.round(Math.max(1, Math.min(3, prev + delta)) * 100) / 100;
+    });
+  }, []);
+
+  // 儲存格式："50% 30% 1.2"
+  const posStr = `${Math.round(imgPos.x)}% ${Math.round(imgPos.y)}%${imgScale !== 1 ? ' ' + imgScale : ''}`;
 
   async function save(e) {
     e.preventDefault();
@@ -106,6 +113,15 @@ export default function AdminBanners() {
     load();
   }
 
+  /** 共用的圖片樣式（預覽 + 列表通用） */
+  function imgStyle(positionStr) {
+    const p = parsePos(positionStr);
+    return {
+      objectPosition: `${p.x}% ${p.y}%`,
+      transform: p.scale !== 1 ? `scale(${p.scale})` : undefined,
+    };
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -113,7 +129,7 @@ export default function AdminBanners() {
         <button onClick={openNew} className="btn-primary">+ 新增輪播圖</button>
       </div>
 
-      {/* 列表 — 模擬前台 16:7 顯示 */}
+      {/* 列表 */}
       <div className="grid md:grid-cols-2 gap-4">
         {list.map(b => (
           <div key={b.id} className="bg-white rounded-lg overflow-hidden shadow-sm">
@@ -122,7 +138,7 @@ export default function AdminBanners() {
                 src={b.image}
                 alt={b.title || ''}
                 className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: b.image_position || '50% 50%' }}
+                style={imgStyle(b.image_position)}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
               <div className="absolute bottom-0 left-0 p-4">
@@ -156,36 +172,38 @@ export default function AdminBanners() {
                 <input type="file" name="image" accept="image/*" className="input" required={!editing.id} onChange={handleFileChange} />
                 <p className="mt-1 text-xs text-gray-400">建議尺寸：1920 × 800 px（比例約 16:7），橫幅寬圖效果最佳</p>
 
-                {/* 可拖拉的前台預覽 */}
+                {/* 可拖拉 + 縮放的前台預覽 */}
                 {previewUrl && (
                   <div className="mt-3">
                     <p className="text-xs text-gray-500 mb-1">
-                      前台顯示預覽 — <span className="text-blue-600">拖拉圖片調整顯示位置</span>
+                      前台顯示預覽 — <span className="text-blue-600">拖拉移動圖片，滾輪縮放</span>
                     </p>
                     <div
                       ref={containerRef}
                       className="relative aspect-[16/7] bg-gray-100 rounded overflow-hidden select-none"
-                      style={{ cursor: 'grab', touchAction: 'none' }}
+                      style={{ cursor: dragging.current ? 'grabbing' : 'grab', touchAction: 'none' }}
                       onPointerDown={onPointerDown}
                       onPointerMove={onPointerMove}
                       onPointerUp={onPointerUp}
                       onPointerLeave={onPointerUp}
+                      onWheel={onWheel}
                     >
                       <img
                         src={previewUrl}
                         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                        style={{ objectPosition: posStr }}
+                        style={{
+                          objectPosition: `${imgPos.x}% ${imgPos.y}%`,
+                          transform: imgScale !== 1 ? `scale(${imgScale})` : undefined,
+                        }}
                         alt="預覽"
                         draggable={false}
-                        onLoad={handleImgLoad}
                       />
                       <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent pointer-events-none" />
-                      {/* 十字準心指示目前焦點 */}
+                      {/* 焦點指示圓 */}
                       <div
-                        className="absolute w-5 h-5 border-2 border-white rounded-full shadow-lg pointer-events-none"
+                        className="absolute w-5 h-5 border-2 border-white rounded-full pointer-events-none"
                         style={{
-                          left: `${imgPos.x}%`,
-                          top: `${imgPos.y}%`,
+                          left: `${imgPos.x}%`, top: `${imgPos.y}%`,
                           transform: 'translate(-50%, -50%)',
                           boxShadow: '0 0 0 1px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3)',
                         }}
@@ -193,14 +211,28 @@ export default function AdminBanners() {
                         <div className="absolute inset-[3px] bg-white rounded-full opacity-80" />
                       </div>
                     </div>
+
+                    {/* 縮放滑桿 */}
+                    <div className="mt-2 flex items-center gap-3">
+                      <span className="text-xs text-gray-500 shrink-0">縮放</span>
+                      <input
+                        type="range"
+                        min="1" max="3" step="0.05"
+                        value={imgScale}
+                        onChange={e => setImgScale(Number(e.target.value))}
+                        className="flex-1 h-1.5 accent-blue-600"
+                      />
+                      <span className="text-xs text-gray-500 w-12 text-right">{imgScale.toFixed(1)}x</span>
+                    </div>
+
                     <div className="mt-1 flex items-center justify-between">
-                      <span className="text-xs text-gray-400">焦點位置：{posStr}</span>
+                      <span className="text-xs text-gray-400">焦點：{Math.round(imgPos.x)}% {Math.round(imgPos.y)}%</span>
                       <button
                         type="button"
-                        onClick={() => setImgPos({ x: 50, y: 50 })}
+                        onClick={() => { setImgPos({ x: 50, y: 50 }); setImgScale(1); }}
                         className="text-xs text-blue-600 hover:underline"
                       >
-                        重置為置中
+                        重置
                       </button>
                     </div>
                   </div>
