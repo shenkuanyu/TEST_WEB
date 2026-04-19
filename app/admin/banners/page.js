@@ -38,7 +38,7 @@ export default function AdminBanners() {
       <div className="grid md:grid-cols-2 gap-4">
         {list.map(b => (
           <div key={b.id} className="bg-white rounded-lg overflow-hidden shadow-sm">
-            <img src={b.image} alt={b.title || ''} className="w-full aspect-[16/7] object-cover" />
+            <img src={b.image} alt={b.title || ''} className="w-full h-auto" />
             <div className="p-4">
               <div className="font-medium">{b.title || '(無標題)'}</div>
               <div className="text-sm text-gray-500">{b.subtitle}</div>
@@ -65,7 +65,7 @@ export default function AdminBanners() {
                 <label className="label">圖片{!editing.id && ' *'}</label>
                 <input type="file" name="image" accept="image/*" className="input" required={!editing.id} />
                 <p className="mt-1 text-xs text-gray-400">建議尺寸：1920 × 800 px（比例約 16:7），橫幅寬圖效果最佳</p>
-                {editing.image && <img src={editing.image} className="w-full aspect-[16/7] mt-2 rounded object-cover" alt="" />}
+                {editing.image && <img src={editing.image} className="w-full h-auto mt-2 rounded" alt="" />}
               </div>
               <div className="flex gap-4 items-center">
                 <div><label className="label inline">排序</label><input type="number" name="sort_order" defaultValue={editing.sort_order || 0} className="input w-24 inline" /></div>
