@@ -3,6 +3,7 @@ import { getAllSettings, putSettings } from '@/lib/settings';
 import { getDB } from '@/lib/admin-db';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const db = getDB();
