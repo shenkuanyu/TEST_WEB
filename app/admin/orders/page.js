@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 export default function AdminOrders() {
   const [list, setList] = useState([]);
   const [view, setView] = useState(null);
+  const [selected, setSelected] = useState(new Set());
 
   async function load() {
     const r = await fetch('/api/admin/orders').then(r => r.json());
     setList(r.items || []);
+    setSelected(new Set());
   }
   useEffect(() => { load(); }, []);
 
@@ -25,17 +27,89 @@ export default function AdminOrders() {
     load();
   }
 
+  /* ---- 複選相關 ---- */
+  function toggleOne(id) {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+  function toggleAll() {
+    if (selected.size === list.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(list.map(o => o.id)));
+    }
+  }
+
+  async function bulkDelete() {
+    if (!selected.size) return;
+    if (!confirm(`確定要刪除選取的 ${selected.size} 筆資料？`)) return;
+    const ids = [...selected];
+    await fetch('/api/admin/orders/bulk', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids }),
+    });
+    load();
+  }
+
+  function doExport() {
+    if (selected.size) {
+      window.open(`/api/admin/orders/export?ids=${[...selected].join(',')}`, '_blank');
+    } else {
+      window.open('/api/admin/orders/export', '_blank');
+    }
+  }
+
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">訂單 / 詢問</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold">訂單 / 詢問</h1>
+        <div className="flex gap-2">
+          {selected.size > 0 && (
+            <button onClick={bulkDelete}
+              className="px-3 py-1.5 text-sm bg-red-600 text-white rounded hover:bg-red-700">
+              刪除選取 ({selected.size})
+            </button>
+          )}
+          <button onClick={doExport}
+            className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700">
+            {selected.size ? `匯出選取 (${selected.size})` : '匯出全部'}
+          </button>
+        </div>
+      </div>
+
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-left">
-            <tr><th className="p-3">ID</th><th>姓名</th><th>Email</th><th>電話</th><th>狀態</th><th>金額</th><th>時間</th><th>操作</th></tr>
+            <tr>
+              <th className="p-3 w-10">
+                <input type="checkbox"
+                  checked={list.length > 0 && selected.size === list.length}
+                  onChange={toggleAll}
+                  className="rounded border-gray-300" />
+              </th>
+              <th className="p-3">ID</th>
+              <th>姓名</th>
+              <th>Email</th>
+              <th>電話</th>
+              <th>狀態</th>
+              <th>金額</th>
+              <th>時間</th>
+              <th>操作</th>
+            </tr>
           </thead>
           <tbody>
             {list.map(o => (
-              <tr key={o.id} className="border-t">
+              <tr key={o.id} className={`border-t ${selected.has(o.id) ? 'bg-blue-50' : ''}`}>
+                <td className="p-3">
+                  <input type="checkbox"
+                    checked={selected.has(o.id)}
+                    onChange={() => toggleOne(o.id)}
+                    className="rounded border-gray-300" />
+                </td>
                 <td className="p-3 text-gray-500">#{o.id}</td>
                 <td>{o.contact_name}</td>
                 <td>{o.contact_email}</td>
@@ -56,7 +130,7 @@ export default function AdminOrders() {
                 </td>
               </tr>
             ))}
-            {!list.length && <tr><td colSpan={8} className="p-6 text-center text-gray-400">尚無資料</td></tr>}
+            {!list.length && <tr><td colSpan={9} className="p-6 text-center text-gray-400">尚無資料</td></tr>}
           </tbody>
         </table>
       </div>
