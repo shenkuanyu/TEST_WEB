@@ -20,7 +20,7 @@ export async function generateMetadata({ params }) {
   const isEn = locale === 'en';
   const brandPrefix = site.code === 'machines' ? 'POSHTECH | ' : 'Jeouyang | ';
   const domain = site.code === 'machines'
-    ? 'https://machines.poshtech.com.tw'
+    ? 'https://poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
 
   // 取得分類名稱作為關鍵字
@@ -46,6 +46,7 @@ export async function generateMetadata({ params }) {
     alternates: {
       canonical: `${domain}/products/${params.id}`,
     },
+    robots: { index: false, follow: false },
     openGraph: {
       title: `${brandPrefix}${name}`,
       description: summary || descFallback,
@@ -195,7 +196,7 @@ export default function ProductDetail({ params }) {
   const videoId = extractYouTubeId(product.video_url);
 
   const domain = site.code === 'machines'
-    ? 'https://machines.poshtech.com.tw'
+    ? 'https://poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
 
   // 產品層級 Schema.org（含 offers 以符合 Google 要求）

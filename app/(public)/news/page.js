@@ -10,7 +10,7 @@ export function generateMetadata() {
   const locale = getLocale();
   const isEn = locale === 'en';
   const domain = site.code === 'machines'
-    ? 'https://machines.poshtech.com.tw'
+    ? 'https://poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
   return {
     title: isEn ? `News — ${site.brand_en}` : `最新消息 — ${site.brand_zh}`,
@@ -18,6 +18,7 @@ export function generateMetadata() {
       ? `Latest news and updates from ${site.brand_en}. New products, exhibitions, and company announcements.`
       : `${site.brand_zh}最新消息：新產品發表、展覽資訊、公司動態。`,
     alternates: { canonical: `${domain}/news` },
+    robots: { index: false, follow: false },
     openGraph: {
       title: isEn ? `News — ${site.brand_en}` : `最新消息 — ${site.brand_zh}`,
       url: `${domain}/news`,

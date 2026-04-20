@@ -10,7 +10,7 @@ export function generateMetadata() {
   const locale = getLocale();
   const isEn = locale === 'en';
   const domain = site.code === 'machines'
-    ? 'https://machines.poshtech.com.tw'
+    ? 'https://poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
   return {
     title: isEn
@@ -20,6 +20,7 @@ export function generateMetadata() {
       ? `${site.brand_en} (Jeouyang Machinery) — Taiwan CNC machine manufacturer established in 1994. Professional vertical, horizontal and gantry machining centers.`
       : `${site.brand_zh}（久洋機械股份有限公司）成立於1994年，台中專業CNC加工中心製造商，產品外銷全球。`,
     alternates: { canonical: `${domain}/about` },
+    robots: { index: false, follow: false },
     openGraph: {
       title: isEn ? `About — ${site.brand_en}` : `公司介紹 — ${site.brand_zh}`,
       url: `${domain}/about`,

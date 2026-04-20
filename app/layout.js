@@ -13,7 +13,7 @@ export async function generateMetadata() {
   const description = isEn ? site.seo_description_en : site.seo_description_zh;
 
   const domain = site.code === 'machines'
-    ? 'https://machines.poshtech.com.tw'
+    ? 'https://poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
 
   return {
@@ -99,7 +99,7 @@ export default function RootLayout({ children }) {
   };
 
   const siteUrl = site.code === 'machines'
-    ? 'https://machines.poshtech.com.tw'
+    ? 'https://poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
 
   const websiteJsonLd = {

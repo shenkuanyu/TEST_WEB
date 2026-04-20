@@ -13,7 +13,7 @@ export async function generateMetadata() {
   const isEn = locale === 'en';
   const brand = site.code === 'machines' ? 'POSHTECH | ' : '';
   const domain = site.code === 'machines'
-    ? 'https://machines.poshtech.com.tw'
+    ? 'https://poshtech.com.tw'
     : 'https://parts.poshtech.com.tw';
   return {
     title: isEn
@@ -23,6 +23,7 @@ export async function generateMetadata() {
     alternates: {
       canonical: `${domain}/products`,
     },
+    robots: { index: false, follow: false },
     openGraph: {
       title: isEn
         ? `${brand}Products — ${site.brand_en}`
