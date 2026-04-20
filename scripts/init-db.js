@@ -138,6 +138,13 @@ CREATE TABLE IF NOT EXISTS site_settings (
   value TEXT
 );
 
+CREATE TABLE IF NOT EXISTS line_subscribers (
+  user_id TEXT PRIMARY KEY,
+  display_name TEXT,
+  active INTEGER DEFAULT 1,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS contacts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT,

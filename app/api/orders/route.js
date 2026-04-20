@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDB } from '@/lib/db';
 import { getMemberSession } from '@/lib/auth';
 import { notifyNewOrder } from '@/lib/mailer';
+import { notifyNewOrderLine } from '@/lib/line-notify';
 
 export const runtime = 'nodejs';
 
@@ -38,8 +39,10 @@ export async function POST(req) {
     console.error('[orders] auto-add contact failed:', e?.message);
   }
 
-  // 非同步寄送 SMTP 通知（失敗不影響 API 成功回應）
-  notifyNewOrder({ contact_name, contact_email, contact_phone, address, note });
+  // 非同步寄送通知（失敗不影響 API 成功回應）
+  const orderData = { contact_name, contact_email, contact_phone, address, note };
+  notifyNewOrder(orderData);
+  notifyNewOrderLine(orderData);
 
   return NextResponse.json({ ok: true, id: orderId });
 }

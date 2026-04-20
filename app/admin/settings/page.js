@@ -8,6 +8,7 @@ const TABS = [
   { id: 'social',    label: '社群連結' },
   { id: 'seo',       label: 'SEO' },
   { id: 'smtp',      label: 'SMTP 寄信' },
+  { id: 'line',      label: 'LINE 通知' },
   { id: 'security',  label: '安全設定' },
 ];
 
@@ -16,8 +17,9 @@ export default function AdminSettings() {
   const [data, setData] = useState(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
+  const [lineSubs, setLineSubs] = useState([]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); loadLineSubs(); }, []);
 
   async function load() {
     const r = await fetch('/api/admin/settings').then(r => r.json());
@@ -43,6 +45,36 @@ export default function AdminSettings() {
     } else {
       setMsg('❌ 儲存失敗');
     }
+  }
+
+  async function loadLineSubs() {
+    try {
+      const r = await fetch('/api/admin/line-subscribers').then(r => r.json());
+      setLineSubs(r.subscribers || []);
+    } catch {}
+  }
+
+  async function testLine() {
+    // 先存檔
+    await fetch('/api/admin/settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    const r = await fetch('/api/admin/settings/test-line', { method: 'POST' });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) alert(`✅ ${j.message}`);
+    else alert(`❌ ${j.error || '發送失敗'}`);
+  }
+
+  async function removeSub(userId) {
+    if (!confirm('確定要移除此通知接收者？')) return;
+    await fetch('/api/admin/line-subscribers', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId }),
+    });
+    loadLineSubs();
   }
 
   async function testMail() {
@@ -258,6 +290,84 @@ export default function AdminSettings() {
             <div className="pt-4 border-t flex items-center gap-3">
               <button type="button" onClick={testMail} className="btn-outline">寄測試信</button>
               <span className="text-sm text-gray-500">會先存檔，再用當前設定寄一封測試信</span>
+            </div>
+          </>
+        )}
+
+        {tab === 'line' && (
+          <>
+            <div className="p-4 bg-green-50 border border-green-200 rounded text-sm text-green-800 mb-2">
+              <strong>LINE Messaging API 通知</strong><br/>
+              當有人透過網站詢價時，系統會自動推播 LINE 訊息通知所有已加好友的人。
+            </div>
+
+            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={data.line_notify_enabled === '1'}
+                  onChange={e => update('line_notify_enabled', e.target.checked ? '1' : '0')}
+                  className="w-5 h-5"
+                />
+                <span className="font-medium">啟用 LINE 詢價通知</span>
+              </label>
+            </div>
+
+            <div className="space-y-4">
+              <Field
+                label="Channel Access Token（長期）"
+                k="line_channel_token" data={data} onChange={update}
+                hint="從 LINE Developers Console → Messaging API → Channel access token 取得"
+              />
+              <Field
+                label="Channel Secret"
+                k="line_channel_secret" data={data} onChange={update}
+                hint="用於驗證 Webhook 簽名（選填但建議填寫），在 Channel 基本設定頁取得"
+              />
+            </div>
+
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded text-sm space-y-2">
+              <strong>設定步驟：</strong>
+              <ol className="list-decimal ml-5 space-y-1">
+                <li>到 <a href="https://developers.line.biz/console/" target="_blank" className="text-blue-600 underline">LINE Developers Console</a> 建立 Messaging API Channel</li>
+                <li>在 Channel 設定頁取得 <strong>Channel Access Token</strong> 和 <strong>Channel Secret</strong>，填入上方</li>
+                <li>在 Messaging API 設定頁填入 Webhook URL：<br/>
+                  <code className="bg-white px-2 py-1 rounded text-xs">https://poshtech.com.tw/api/webhook/line</code>
+                </li>
+                <li>開啟「Use webhook」開關</li>
+                <li>用手機掃描 Channel 的 QR Code 加好友（所有要收通知的人都要加）</li>
+                <li>按下方「發送測試」驗證</li>
+              </ol>
+            </div>
+
+            <div className="pt-4 border-t">
+              <h3 className="font-semibold mb-3">通知接收者（已加好友）</h3>
+              {lineSubs.length === 0 ? (
+                <p className="text-gray-400 text-sm">尚無人加入好友。請先完成上方設定，再用 LINE 掃描 QR Code 加好友。</p>
+              ) : (
+                <div className="space-y-2">
+                  {lineSubs.map(sub => (
+                    <div key={sub.user_id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                      <div>
+                        <span className="font-medium">{sub.display_name}</span>
+                        <span className="ml-2 text-xs text-gray-400">{sub.user_id.slice(0, 12)}...</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeSub(sub.user_id)}
+                        className="text-red-600 text-sm hover:underline"
+                      >
+                        移除
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 flex items-center gap-3">
+                <button type="button" onClick={testLine} className="btn-outline">發送測試通知</button>
+                <button type="button" onClick={loadLineSubs} className="text-sm text-blue-600 hover:underline">重新整理名單</button>
+              </div>
             </div>
           </>
         )}
