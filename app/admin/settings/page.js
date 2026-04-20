@@ -67,8 +67,17 @@ export default function AdminSettings() {
     else alert(`❌ ${j.error || '發送失敗'}`);
   }
 
+  async function toggleSub(userId, active) {
+    await fetch('/api/admin/line-subscribers', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, active }),
+    });
+    loadLineSubs();
+  }
+
   async function removeSub(userId) {
-    if (!confirm('確定要移除此通知接收者？')) return;
+    if (!confirm('確定要永久刪除此人？')) return;
     await fetch('/api/admin/line-subscribers', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -341,23 +350,34 @@ export default function AdminSettings() {
             </div>
 
             <div className="pt-4 border-t">
-              <h3 className="font-semibold mb-3">通知接收者（已加好友）</h3>
+              <h3 className="font-semibold mb-3">LINE 好友名單</h3>
+              <p className="text-sm text-gray-500 mb-3">加好友的人會自動出現在這裡。只有開啟「接收通知」的人才會收到詢價推播，其他人不會收到。</p>
               {lineSubs.length === 0 ? (
-                <p className="text-gray-400 text-sm">尚無人加入好友。請先完成上方設定，再用 LINE 掃描 QR Code 加好友。</p>
+                <p className="text-gray-400 text-sm">尚無人加入好友。請先完成上方設定並設定 Webhook，再用 LINE 掃描 QR Code 加好友。</p>
               ) : (
                 <div className="space-y-2">
                   {lineSubs.map(sub => (
                     <div key={sub.user_id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                      <div>
-                        <span className="font-medium">{sub.display_name}</span>
-                        <span className="ml-2 text-xs text-gray-400">{sub.user_id.slice(0, 12)}...</span>
+                      <div className="flex items-center gap-3">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={!!sub.active}
+                            onChange={e => toggleSub(sub.user_id, e.target.checked)}
+                            className="w-5 h-5"
+                          />
+                          <span className="font-medium">{sub.display_name}</span>
+                        </label>
+                        <span className={`text-xs px-2 py-0.5 rounded ${sub.active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-500'}`}>
+                          {sub.active ? '接收通知' : '不接收'}
+                        </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => removeSub(sub.user_id)}
-                        className="text-red-600 text-sm hover:underline"
+                        className="text-red-400 text-xs hover:text-red-600 hover:underline"
                       >
-                        移除
+                        刪除
                       </button>
                     </div>
                   ))}
@@ -367,6 +387,7 @@ export default function AdminSettings() {
               <div className="mt-4 flex items-center gap-3">
                 <button type="button" onClick={testLine} className="btn-outline">發送測試通知</button>
                 <button type="button" onClick={loadLineSubs} className="text-sm text-blue-600 hover:underline">重新整理名單</button>
+                <span className="text-xs text-gray-400">測試只會發給已勾選「接收通知」的人</span>
               </div>
             </div>
           </>
