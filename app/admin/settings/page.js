@@ -9,7 +9,7 @@ const TABS = [
   { id: 'seo',       label: 'SEO' },
   { id: 'smtp',      label: 'SMTP 寄信' },
   { id: 'line',      label: 'LINE 通知' },
-  { id: 'security',  label: '安全設定' },
+  { id: 'security',  label: '帳號安全' },
 ];
 
 export default function AdminSettings() {
@@ -19,6 +19,16 @@ export default function AdminSettings() {
   const [msg, setMsg] = useState('');
   const [lineSubs, setLineSubs] = useState([]);
   const [lineSearch, setLineSearch] = useState('');
+
+  // 密碼修改
+  const [pwCurrent, setPwCurrent] = useState('');
+  const [pwNew, setPwNew] = useState('');
+  const [pwConfirm, setPwConfirm] = useState('');
+  const [pwCode, setPwCode] = useState('');
+  const [pwCodeSent, setPwCodeSent] = useState(false);
+  const [pwEmail, setPwEmail] = useState('');
+  const [pwCooldown, setPwCooldown] = useState(0);
+  const [pwMsg, setPwMsg] = useState({ text: '', type: '' });
 
   useEffect(() => { load(); loadLineSubs(); }, []);
 
@@ -104,6 +114,55 @@ export default function AdminSettings() {
     const j = await r.json().catch(() => ({}));
     if (r.ok) alert(`✅ 測試信已發送到 ${to}，請檢查收件匣（也看看垃圾郵件）`);
     else alert(`❌ 發送失敗：${j.error || '未知錯誤'}`);
+  }
+
+  // ===== 密碼修改 =====
+  async function sendVerifyCode() {
+    setPwMsg({ text: '', type: '' });
+    const r = await fetch('/api/admin/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'send-code' }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) {
+      setPwCodeSent(true);
+      setPwEmail(j.email || '');
+      setPwMsg({ text: `驗證碼已發送至 ${j.email}，請於 5 分鐘內輸入`, type: 'ok' });
+      // 60 秒冷卻
+      setPwCooldown(60);
+      const timer = setInterval(() => {
+        setPwCooldown(prev => {
+          if (prev <= 1) { clearInterval(timer); return 0; }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setPwMsg({ text: j.error || '發送失敗', type: 'err' });
+    }
+  }
+
+  async function submitChangePassword() {
+    setPwMsg({ text: '', type: '' });
+    if (!pwCode) return setPwMsg({ text: '請輸入驗證碼', type: 'err' });
+    if (!pwCurrent) return setPwMsg({ text: '請輸入目前密碼', type: 'err' });
+    if (!pwNew) return setPwMsg({ text: '請輸入新密碼', type: 'err' });
+    if (pwNew.length < 6) return setPwMsg({ text: '新密碼至少需要 6 個字元', type: 'err' });
+    if (pwNew !== pwConfirm) return setPwMsg({ text: '兩次輸入的新密碼不一致', type: 'err' });
+
+    const r = await fetch('/api/admin/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'change', code: pwCode, currentPassword: pwCurrent, newPassword: pwNew }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) {
+      setPwMsg({ text: '密碼修改成功！', type: 'ok' });
+      setPwCurrent(''); setPwNew(''); setPwConfirm(''); setPwCode('');
+      setPwCodeSent(false);
+    } else {
+      setPwMsg({ text: j.error || '修改失敗', type: 'err' });
+    }
   }
 
   if (!data) return <div className="text-gray-400">載入中…</div>;
@@ -406,6 +465,92 @@ export default function AdminSettings() {
 
         {tab === 'security' && (
           <>
+            {/* 修改密碼區塊 */}
+            <div className="border border-gray-200 rounded-lg p-5 mb-6">
+              <h3 className="text-base font-semibold mb-1">修改登入密碼</h3>
+              <p className="text-xs text-gray-500 mb-4">修改密碼前需先發送驗證碼至通知信箱進行身份驗證</p>
+
+              {pwMsg.text && (
+                <div className={`text-sm mb-3 px-3 py-2 rounded ${pwMsg.type === 'ok' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                  {pwMsg.text}
+                </div>
+              )}
+
+              {/* 步驟一：發送驗證碼 */}
+              <div className="mb-4">
+                <label className="label">步驟一：發送驗證碼</label>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={sendVerifyCode}
+                    disabled={pwCooldown > 0}
+                    className="btn-outline disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {pwCooldown > 0 ? `重新發送 (${pwCooldown}s)` : pwCodeSent ? '重新發送驗證碼' : '發送驗證碼'}
+                  </button>
+                  {pwEmail && <span className="text-xs text-gray-500">已發送至 {pwEmail}</span>}
+                </div>
+              </div>
+
+              {/* 步驟二：填寫表單 */}
+              {pwCodeSent && (
+                <div className="space-y-3">
+                  <div>
+                    <label className="label">驗證碼</label>
+                    <input
+                      type="text"
+                      className="input font-mono tracking-widest text-center"
+                      style={{ maxWidth: 200 }}
+                      maxLength={6}
+                      placeholder="6 位數驗證碼"
+                      value={pwCode}
+                      onChange={e => setPwCode(e.target.value.replace(/\D/g, ''))}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">目前密碼</label>
+                    <input
+                      type="password"
+                      className="input"
+                      style={{ maxWidth: 320 }}
+                      placeholder="輸入目前的登入密碼"
+                      value={pwCurrent}
+                      onChange={e => setPwCurrent(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">新密碼</label>
+                    <input
+                      type="password"
+                      className="input"
+                      style={{ maxWidth: 320 }}
+                      placeholder="至少 6 個字元"
+                      value={pwNew}
+                      onChange={e => setPwNew(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">確認新密碼</label>
+                    <input
+                      type="password"
+                      className="input"
+                      style={{ maxWidth: 320 }}
+                      placeholder="再次輸入新密碼"
+                      value={pwConfirm}
+                      onChange={e => setPwConfirm(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={submitChangePassword}
+                    className="btn-primary mt-2"
+                  >
+                    確認修改密碼
+                  </button>
+                </div>
+              )}
+            </div>
+
             <Field
               label="後台登入 IP 白名單"
               k="admin_allow_ips" data={data} onChange={update} type="textarea"
