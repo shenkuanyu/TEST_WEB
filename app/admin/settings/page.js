@@ -18,6 +18,7 @@ export default function AdminSettings() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
   const [lineSubs, setLineSubs] = useState([]);
+  const [lineSearch, setLineSearch] = useState('');
 
   useEffect(() => { load(); loadLineSubs(); }, []);
 
@@ -356,7 +357,17 @@ export default function AdminSettings() {
                 <p className="text-gray-400 text-sm">尚無人加入好友。請先完成上方設定並設定 Webhook，再用 LINE 掃描 QR Code 加好友。</p>
               ) : (
                 <div className="space-y-2">
-                  {lineSubs.map(sub => (
+                  {lineSubs.length >= 5 && (
+                    <input
+                      type="text"
+                      placeholder="搜尋名稱..."
+                      value={lineSearch}
+                      onChange={e => setLineSearch(e.target.value)}
+                      className="input mb-2"
+                    />
+                  )}
+                  <div className="text-xs text-gray-400 mb-1">共 {lineSubs.length} 人，{lineSubs.filter(s => s.active).length} 人接收通知</div>
+                  {lineSubs.filter(sub => !lineSearch || sub.display_name?.toLowerCase().includes(lineSearch.toLowerCase())).map(sub => (
                     <div key={sub.user_id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
                       <div className="flex items-center gap-3">
                         <label className="flex items-center gap-2 cursor-pointer">
