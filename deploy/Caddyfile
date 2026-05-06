@@ -96,6 +96,13 @@ parts.poshtech.com.tw {
     }
 }
 
+# ── 舊站 301 永久轉址 ──
+# jeouyang.com.tw → poshtech.com.tw
+# Google 會將舊站的 SEO 權重轉移到新站
+jeouyang.com.tw, www.jeouyang.com.tw {
+    redir * https://poshtech.com.tw{uri} permanent
+}
+
 # ── 健康檢查頁面（選用） ──
 # 可用於監控：http://VPS_IP/health
 :80 {
