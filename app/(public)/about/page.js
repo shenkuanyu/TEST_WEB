@@ -72,6 +72,10 @@ function getAboutData(locale) {
       cap_title: '產品與服務能量', cap_title_en: 'Products & Services',
       cap_desc: '從精密零組件到整機，完整涵蓋工具機產業上下游所需。',
       cap_desc_en: 'From precision components to complete machines, covering the full spectrum of machine tool industry needs.',
+      section_about: '公司簡介', section_about_en: 'About Us',
+      section_philosophy: '經營理念', section_philosophy_en: 'Our Philosophy',
+      section_stats: '數據亮點', section_stats_en: 'Key Figures',
+      section_milestone: '發展歷程', section_milestone_en: 'Milestones',
       cap_btn: '瀏覽完整產品列表', cap_btn_en: 'View All Products',
       info_title: '公司資訊', info_title_en: 'Company Info',
       info_basic: '基本資料', info_basic_en: 'Basic Info',
@@ -123,6 +127,10 @@ function getAboutData(locale) {
       title: isEn ? (c.title_en || c.title) : c.title,
       items: (isEn ? (c.items_en || c.items) : c.items).split(',').map(i => i.trim()).filter(Boolean),
     })),
+    section_about: L('section_about'),
+    section_philosophy: L('section_philosophy'),
+    section_stats: L('section_stats'),
+    section_milestone: L('section_milestone'),
     cap_title: L('cap_title'), cap_desc: L('cap_desc'), cap_btn: L('cap_btn'),
     info_title: L('info_title'), info_basic: L('info_basic'), info_contact: L('info_contact'),
     info_name_label: L('info_name_label'), info_name: L('info_name'),
@@ -134,8 +142,6 @@ function getAboutData(locale) {
     info_inquiry_btn: L('info_inquiry_btn'),
     cta_title: L('cta_title'), cta_desc: L('cta_desc'),
     cta_call: L('cta_call'), cta_products: L('cta_products'),
-    section_philosophy: isEn ? 'Our Philosophy' : '經營理念',
-    section_milestone: isEn ? 'Milestones' : '發展歷程',
   };
 }
 
@@ -184,7 +190,7 @@ export default function AboutPage() {
             <p className="section-sub mb-3">OUR PHILOSOPHY</p>
             <h2 className="section-title">{d.section_philosophy}</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className={`grid md:grid-cols-${Math.min(d.philosophy.length, 3)} gap-6`}>
             {d.philosophy.map((x) => (
               <div key={x.num} className="bg-white p-8 rounded-lg border-t-4 border-brand shadow-sm">
                 <div className="text-brand text-4xl font-light mb-4">{x.num}</div>
@@ -218,9 +224,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 品質與技術 */}
+      {/* 數據亮點 */}
       <section className="bg-gray-900 text-white py-20">
-        <div className="container grid md:grid-cols-3 gap-8 text-center">
+        <div className="container">
+          <div className="text-center mb-14">
+            <p className="section-sub mb-3 !text-brand">KEY FIGURES</p>
+            <h2 className="text-3xl md:text-5xl font-light">{d.section_stats}</h2>
+          </div>
+        <div className={`grid md:grid-cols-${Math.min(d.stats.length, 3)} gap-8 text-center`}>
           {d.stats.map(x => (
             <div key={x.title}>
               <div className="text-5xl md:text-6xl font-light text-brand mb-3">{x.number}</div>
@@ -228,6 +239,7 @@ export default function AboutPage() {
               <p className="text-gray-400 text-sm leading-relaxed">{x.desc}</p>
             </div>
           ))}
+        </div>
         </div>
       </section>
 

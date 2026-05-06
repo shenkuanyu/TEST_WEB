@@ -247,6 +247,10 @@ function AboutPageEditor({ data, onSave, saving }) {
       { title: '配件與週邊', title_en: 'Accessories', items: '傳動座,尾端軸承座,主軸馬達調整版,標準地基螺栓組', items_en: 'Drive Units,Tail Bearing Housings,Spindle Motor Plates,Standard Foundation Bolt Sets' },
       { title: '中古機專區', title_en: 'Used Machines', items: '二手中古機,加工中心空機,整備翻修服務', items_en: 'Pre-owned Machines,Bare Machining Centers,Refurbishment Services' },
     ],
+    section_about: '公司簡介', section_about_en: 'About Us',
+    section_philosophy: '經營理念', section_philosophy_en: 'Our Philosophy',
+    section_stats: '數據亮點', section_stats_en: 'Key Figures',
+    section_milestone: '發展歷程', section_milestone_en: 'Milestones',
     cap_title: '產品與服務能量', cap_title_en: 'Products & Services',
     cap_desc: '從精密零組件到整機，完整涵蓋工具機產業上下游所需。',
     cap_desc_en: 'From precision components to complete machines, covering the full spectrum of machine tool industry needs.',
@@ -294,6 +298,46 @@ function AboutPageEditor({ data, onSave, saving }) {
     });
   }
 
+  /* 經營理念：新增 / 刪除 / 排序 */
+  function addPhilosophy() {
+    setForm(prev => ({
+      ...prev,
+      philosophy: [...prev.philosophy, { num: String(prev.philosophy.length + 1).padStart(2, '0'), title: '', title_en: '', desc: '', desc_en: '' }],
+    }));
+  }
+  function removePhilosophy(idx) {
+    setForm(prev => ({ ...prev, philosophy: prev.philosophy.filter((_, i) => i !== idx) }));
+  }
+  function movePhilosophy(idx, dir) {
+    setForm(prev => {
+      const arr = [...prev.philosophy];
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= arr.length) return prev;
+      [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+      return { ...prev, philosophy: arr };
+    });
+  }
+
+  /* 數據亮點：新增 / 刪除 / 排序 */
+  function addStat() {
+    setForm(prev => ({
+      ...prev,
+      stats: [...prev.stats, { number: '', title: '', title_en: '', desc: '', desc_en: '' }],
+    }));
+  }
+  function removeStat(idx) {
+    setForm(prev => ({ ...prev, stats: prev.stats.filter((_, i) => i !== idx) }));
+  }
+  function moveStat(idx, dir) {
+    setForm(prev => {
+      const arr = [...prev.stats];
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= arr.length) return prev;
+      [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+      return { ...prev, stats: arr };
+    });
+  }
+
   /* 產品能量：新增 / 刪除 */
   function addCapability() {
     setForm(prev => ({
@@ -336,6 +380,7 @@ function AboutPageEditor({ data, onSave, saving }) {
       {/* 公司簡介 */}
       <fieldset className="bg-white rounded-lg border p-5 space-y-3">
         <legend className="text-base font-semibold px-2">公司簡介</legend>
+        <div><label className="label">區塊標題</label><input className="input" value={form[s('section_about')] || ''} onChange={e => update(s('section_about'), e.target.value)} placeholder={lang === 'zh' ? '公司簡介' : 'About Us'} /></div>
         <div><label className="label">標題</label><input className="input" value={form[s('about_title')] || ''} onChange={e => update(s('about_title'), e.target.value)} /></div>
         <div><label className="label">品牌標語（紅字）</label><input className="input" value={form[s('about_highlight')] || ''} onChange={e => update(s('about_highlight'), e.target.value)} /></div>
         <div><label className="label">段落一</label><textarea className="input" rows={3} value={form[s('about_p1')] || ''} onChange={e => update(s('about_p1'), e.target.value)} /></div>
@@ -344,35 +389,58 @@ function AboutPageEditor({ data, onSave, saving }) {
 
       {/* 經營理念 */}
       <fieldset className="bg-white rounded-lg border p-5 space-y-3">
-        <legend className="text-base font-semibold px-2">經營理念（3 項）</legend>
+        <legend className="text-base font-semibold px-2">經營理念（{form.philosophy.length} 項）</legend>
+        <div><label className="label">區塊標題</label><input className="input" value={form[s('section_philosophy')] || ''} onChange={e => update(s('section_philosophy'), e.target.value)} placeholder={lang === 'zh' ? '經營理念' : 'Our Philosophy'} /></div>
         {form.philosophy.map((p, i) => (
-          <div key={i} className="grid grid-cols-[50px_1fr] gap-2 border-b pb-3 last:border-0">
-            <div><label className="label text-xs">編號</label><input className="input !text-sm !py-1" value={p.num} onChange={e => updateArrayItem('philosophy', i, 'num', e.target.value)} /></div>
-            <div className="space-y-1">
+          <div key={i} className="flex gap-2 items-start border-b pb-3 last:border-0">
+            <div className="flex flex-col items-center gap-0.5 pt-5 shrink-0">
+              <button type="button" onClick={() => movePhilosophy(i, -1)} disabled={i === 0} className="text-gray-400 hover:text-brand disabled:opacity-20 text-xs">▲</button>
+              <span className="text-[10px] text-gray-400">{i + 1}</span>
+              <button type="button" onClick={() => movePhilosophy(i, 1)} disabled={i === form.philosophy.length - 1} className="text-gray-400 hover:text-brand disabled:opacity-20 text-xs">▼</button>
+            </div>
+            <div className="w-12 shrink-0">
+              <label className="label text-xs">編號</label>
+              <input className="input !text-sm !py-1" value={p.num} onChange={e => updateArrayItem('philosophy', i, 'num', e.target.value)} />
+            </div>
+            <div className="flex-1 space-y-1">
               <div><label className="label text-xs">標題</label><input className="input !text-sm !py-1" value={p[s('title')] || ''} onChange={e => updateArrayItem('philosophy', i, s('title'), e.target.value)} /></div>
               <div><label className="label text-xs">說明</label><textarea className="input !text-sm !py-1" rows={2} value={p[s('desc')] || ''} onChange={e => updateArrayItem('philosophy', i, s('desc'), e.target.value)} /></div>
             </div>
+            <button type="button" onClick={() => removePhilosophy(i)} className="text-red-400 hover:text-red-600 text-lg mt-5 shrink-0" title="刪除">×</button>
           </div>
         ))}
+        <button type="button" onClick={addPhilosophy} className="btn-outline !text-sm">+ 新增理念</button>
       </fieldset>
 
       {/* 數據亮點 */}
       <fieldset className="bg-white rounded-lg border p-5 space-y-3">
-        <legend className="text-base font-semibold px-2">數據亮點（3 項）</legend>
+        <legend className="text-base font-semibold px-2">數據亮點（{form.stats.length} 項）</legend>
+        <div><label className="label">區塊標題</label><input className="input" value={form[s('section_stats')] || ''} onChange={e => update(s('section_stats'), e.target.value)} placeholder={lang === 'zh' ? '數據亮點' : 'Key Figures'} /></div>
         {form.stats.map((st, i) => (
-          <div key={i} className="grid grid-cols-[70px_1fr] gap-2 border-b pb-3 last:border-0">
-            <div><label className="label text-xs">數字</label><input className="input !text-sm !py-1" value={st.number} onChange={e => updateArrayItem('stats', i, 'number', e.target.value)} /></div>
-            <div className="space-y-1">
+          <div key={i} className="flex gap-2 items-start border-b pb-3 last:border-0">
+            <div className="flex flex-col items-center gap-0.5 pt-5 shrink-0">
+              <button type="button" onClick={() => moveStat(i, -1)} disabled={i === 0} className="text-gray-400 hover:text-brand disabled:opacity-20 text-xs">▲</button>
+              <span className="text-[10px] text-gray-400">{i + 1}</span>
+              <button type="button" onClick={() => moveStat(i, 1)} disabled={i === form.stats.length - 1} className="text-gray-400 hover:text-brand disabled:opacity-20 text-xs">▼</button>
+            </div>
+            <div className="w-20 shrink-0">
+              <label className="label text-xs">數字</label>
+              <input className="input !text-sm !py-1" value={st.number} onChange={e => updateArrayItem('stats', i, 'number', e.target.value)} />
+            </div>
+            <div className="flex-1 space-y-1">
               <div><label className="label text-xs">標題</label><input className="input !text-sm !py-1" value={st[s('title')] || ''} onChange={e => updateArrayItem('stats', i, s('title'), e.target.value)} /></div>
               <div><label className="label text-xs">說明</label><input className="input !text-sm !py-1" value={st[s('desc')] || ''} onChange={e => updateArrayItem('stats', i, s('desc'), e.target.value)} /></div>
             </div>
+            <button type="button" onClick={() => removeStat(i)} className="text-red-400 hover:text-red-600 text-lg mt-5 shrink-0" title="刪除">×</button>
           </div>
         ))}
+        <button type="button" onClick={addStat} className="btn-outline !text-sm">+ 新增亮點</button>
       </fieldset>
 
       {/* 發展歷程 */}
       <fieldset className="bg-white rounded-lg border p-5 space-y-3">
         <legend className="text-base font-semibold px-2">發展歷程</legend>
+        <div><label className="label">區塊標題</label><input className="input" value={form[s('section_milestone')] || ''} onChange={e => update(s('section_milestone'), e.target.value)} placeholder={lang === 'zh' ? '發展歷程' : 'Milestones'} /></div>
         {form.milestones.map((m, i) => (
           <div key={i} className="flex gap-2 items-start border-b pb-3 last:border-0">
             {/* 排序 + 刪除 */}
