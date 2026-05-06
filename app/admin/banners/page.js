@@ -164,8 +164,14 @@ export default function AdminBanners() {
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <form onSubmit={save} className="p-6 space-y-4" encType="multipart/form-data">
               <h2 className="text-xl font-semibold">{editing.id ? '編輯輪播圖' : '新增輪播圖'}</h2>
-              <div><label className="label">主標題</label><input name="title" defaultValue={editing.title || ''} className="input" /></div>
-              <div><label className="label">副標題</label><input name="subtitle" defaultValue={editing.subtitle || ''} className="input" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="label">主標題（中文）</label><input name="title" defaultValue={editing.title || ''} className="input" /></div>
+                <div><label className="label">主標題（English）</label><input name="title_en" defaultValue={editing.title_en || ''} className="input" /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="label">副標題（中文）</label><input name="subtitle" defaultValue={editing.subtitle || ''} className="input" /></div>
+                <div><label className="label">副標題（English）</label><input name="subtitle_en" defaultValue={editing.subtitle_en || ''} className="input" /></div>
+              </div>
               <div><label className="label">連結網址</label><input name="link_url" defaultValue={editing.link_url || ''} placeholder="/products" className="input" /></div>
               <div>
                 <label className="label">圖片{!editing.id && ' *'}</label>

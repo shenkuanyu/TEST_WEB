@@ -12,7 +12,8 @@ function parseImagePos(str) {
   return { pos: `${x}% ${y}%`, scale };
 }
 
-export default function HeroCarousel({ banners = [] }) {
+export default function HeroCarousel({ banners = [], locale = 'zh' }) {
+  const isEn = locale === 'en';
   const [idx, setIdx] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
 
@@ -44,7 +45,7 @@ export default function HeroCarousel({ banners = [] }) {
   if (!banners.length) {
     return (
       <div className="bg-gray-100 h-[40vh] md:h-[60vh] flex items-center justify-center text-gray-400">
-        尚未新增輪播圖，請至後台新增。
+        {isEn ? 'No banners yet.' : '尚未新增輪播圖，請至後台新增。'}
       </div>
     );
   }
@@ -90,7 +91,7 @@ export default function HeroCarousel({ banners = [] }) {
                 href={b.link_url}
                 className="btn-primary mt-3 md:mt-6 w-fit !px-4 md:!px-5 !py-2 md:!py-2.5 text-xs sm:text-sm md:text-base"
               >
-                了解更多
+                {isEn ? 'Learn More' : '了解更多'}
               </Link>
             )}
           </div>

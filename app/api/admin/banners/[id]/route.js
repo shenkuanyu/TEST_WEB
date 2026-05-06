@@ -13,11 +13,16 @@ export async function PUT(req, { params }) {
   let imagePath = current.image;
   if (file && typeof file !== 'string' && file.size > 0) imagePath = await saveUploadedFile(file);
 
+  try { db.exec('ALTER TABLE banners ADD COLUMN title_en TEXT'); } catch {}
+  try { db.exec('ALTER TABLE banners ADD COLUMN subtitle_en TEXT'); } catch {}
+
   db.prepare(`
-    UPDATE banners SET title=?, subtitle=?, link_url=?, image=?, sort_order=?, active=?, image_position=? WHERE id=?
+    UPDATE banners SET title=?, subtitle=?, title_en=?, subtitle_en=?, link_url=?, image=?, sort_order=?, active=?, image_position=? WHERE id=?
   `).run(
     fd.get('title') || null,
     fd.get('subtitle') || null,
+    fd.get('title_en') || null,
+    fd.get('subtitle_en') || null,
     fd.get('link_url') || null,
     imagePath,
     Number(fd.get('sort_order') || 0),

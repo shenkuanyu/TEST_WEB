@@ -15,7 +15,12 @@ export default function Home() {
   const site = getSiteMeta();
   const isEn = locale === 'en';
 
-  const banners = db.prepare('SELECT * FROM banners WHERE active=1 ORDER BY sort_order').all();
+  const bannersRaw = db.prepare('SELECT * FROM banners WHERE active=1 ORDER BY sort_order').all();
+  const banners = bannersRaw.map(b => ({
+    ...b,
+    title: isEn ? (b.title_en || b.title) : b.title,
+    subtitle: isEn ? (b.subtitle_en || b.subtitle) : b.subtitle,
+  }));
   const products = db.prepare('SELECT * FROM products WHERE published=1 ORDER BY sort_order, id DESC').all()
     .map(p => ({ ...p, name: pickI18n(p, 'name', locale), summary: pickI18n(p, 'summary', locale) }));
   const news = db.prepare('SELECT * FROM news WHERE published=1 ORDER BY id DESC LIMIT 4').all()
@@ -41,7 +46,7 @@ export default function Home() {
   return (
     <>
       {/* ===== Hero ===== */}
-      <HeroCarousel banners={banners} />
+      <HeroCarousel banners={banners} locale={locale} />
 
       {/* ===== 關於區塊：左文字 + 右 3 圖卡 ===== */}
       <section className="relative py-14 md:py-24 overflow-hidden">
