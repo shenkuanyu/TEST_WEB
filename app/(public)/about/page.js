@@ -170,7 +170,6 @@ export default function AboutPage() {
             <img src="/uploads/about.jpg" alt="久洋機械" className="rounded-lg w-full shadow-sm" />
           </div>
           <div>
-            <p className="section-sub mb-3 !text-brand">ABOUT US</p>
             <h2 className="text-3xl md:text-4xl font-light mb-6 leading-snug">
               {d.about_title}<br />
               <span className="text-brand">{d.about_highlight}</span>
@@ -187,7 +186,6 @@ export default function AboutPage() {
       <section className="bg-gray-50 py-20">
         <div className="container">
           <div className="text-center mb-14">
-            <p className="section-sub mb-3">OUR PHILOSOPHY</p>
             <h2 className="section-title">{d.section_philosophy}</h2>
           </div>
           <div className={`grid md:grid-cols-${Math.min(d.philosophy.length, 3)} gap-6`}>
@@ -205,7 +203,6 @@ export default function AboutPage() {
       {/* 產品能量 */}
       <section className="container py-20">
         <div className="text-center mb-14">
-          <p className="section-sub mb-3">CAPABILITY</p>
           <h2 className="section-title">{d.cap_title}</h2>
           <p className="mt-4 text-gray-500 max-w-2xl mx-auto">{d.cap_desc}</p>
         </div>
@@ -228,7 +225,6 @@ export default function AboutPage() {
       <section className="bg-gray-900 text-white py-20">
         <div className="container">
           <div className="text-center mb-14">
-            <p className="section-sub mb-3 !text-brand">KEY FIGURES</p>
             <h2 className="text-3xl md:text-5xl font-light">{d.section_stats}</h2>
           </div>
         <div className={`grid md:grid-cols-${Math.min(d.stats.length, 3)} gap-8 text-center`}>
@@ -246,7 +242,6 @@ export default function AboutPage() {
       {/* 發展歷程 */}
       <section className="container py-20">
         <div className="text-center mb-14">
-          <p className="section-sub mb-3">MILESTONE</p>
           <h2 className="section-title">{d.section_milestone}</h2>
         </div>
         <div className="max-w-3xl mx-auto space-y-8 relative">
@@ -268,7 +263,6 @@ export default function AboutPage() {
       <section className="bg-gray-50 py-20">
         <div className="container">
           <div className="text-center mb-12">
-            <p className="section-sub mb-3">COMPANY INFO</p>
             <h2 className="section-title">{d.info_title}</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
