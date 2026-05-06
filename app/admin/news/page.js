@@ -63,9 +63,18 @@ export default function AdminNews() {
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <form onSubmit={save} className="p-6 space-y-4" encType="multipart/form-data">
               <h2 className="text-xl font-semibold">{editing.id ? '編輯消息' : '新增消息'}</h2>
-              <div><label className="label">標題 *</label><input name="title" required defaultValue={editing.title || ''} className="input" /></div>
-              <div><label className="label">摘要</label><input name="summary" defaultValue={editing.summary || ''} className="input" /></div>
-              <div><label className="label">內容</label><textarea name="content" rows={10} defaultValue={editing.content || ''} className="input" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="label">標題（中文）*</label><input name="title" required defaultValue={editing.title || ''} className="input" /></div>
+                <div><label className="label">標題（English）</label><input name="title_en" defaultValue={editing.title_en || ''} className="input" /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="label">摘要（中文）</label><input name="summary" defaultValue={editing.summary || ''} className="input" /></div>
+                <div><label className="label">摘要（English）</label><input name="summary_en" defaultValue={editing.summary_en || ''} className="input" /></div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="label">內容（中文）</label><textarea name="content" rows={10} defaultValue={editing.content || ''} className="input" /></div>
+                <div><label className="label">內容（English）</label><textarea name="content_en" rows={10} defaultValue={editing.content_en || ''} className="input" /></div>
+              </div>
               <div>
                 <label className="label">封面圖</label>
                 <input type="file" name="cover_image" accept="image/*" className="input" />

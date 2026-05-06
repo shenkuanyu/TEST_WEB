@@ -1,7 +1,7 @@
 import NewsCard from '@/components/NewsCard';
 import { getDB } from '@/lib/db';
 import { getSiteMeta } from '@/lib/site';
-import { getLocale } from '@/lib/i18n';
+import { getLocale, pickI18n } from '@/lib/i18n';
 
 export const revalidate = 60;
 
@@ -28,19 +28,22 @@ export function generateMetadata() {
 
 export default function NewsPage() {
   const db = getDB();
-  const news = db.prepare('SELECT * FROM news WHERE published=1 ORDER BY id DESC').all();
+  const locale = getLocale();
+  const isEn = locale === 'en';
+  const news = db.prepare('SELECT * FROM news WHERE published=1 ORDER BY id DESC').all()
+    .map(n => ({ ...n, title: pickI18n(n, 'title', locale), summary: pickI18n(n, 'summary', locale) }));
 
   return (
     <div>
       <section className="bg-gray-50 py-16">
         <div className="container text-center">
           <p className="section-sub mb-3">NEWS</p>
-          <h1 className="section-title">最新消息</h1>
+          <h1 className="section-title">{isEn ? 'Latest News' : '最新消息'}</h1>
         </div>
       </section>
       <section className="container py-12">
         {news.length === 0 ? (
-          <p className="text-center text-gray-400 py-20">目前尚無消息</p>
+          <p className="text-center text-gray-400 py-20">{isEn ? 'No news yet.' : '目前尚無消息'}</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {news.map(n => <NewsCard key={n.id} item={n} />)}
