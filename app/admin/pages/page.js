@@ -241,12 +241,28 @@ function AboutPageEditor({ data, onSave, saving }) {
       { year: '擴展期', title: '延伸至整機製造', title_en: 'Machine Manufacturing', desc: '陸續切入立式 / 臥式 / 龍門 / 動柱式加工中心，成為兼具零件與整機能力的綜合型供應商。', desc_en: 'Expanded into vertical, horizontal, and gantry machining centers.' },
       { year: '至今', title: '持續深耕', title_en: 'Continuous Growth', desc: '持續以「減少客戶庫存、縮短備料期、降低採購成本」為核心價值，服務台灣工具機與自動化產業。', desc_en: 'Serving Taiwan\'s machine tool industry with core values of reducing inventory and costs.' },
     ],
+    capabilities: [
+      { title: '精密機械零組件', title_en: 'Precision Components', items: '斜楔,聯軸器,軸承座,操作箱旋轉座,碰塊,拉刀爪', items_en: 'Gib Blocks,Couplings,Bearing Housings,Rotary Switch Boxes,Stop Blocks,Pull Studs' },
+      { title: '工具機整機', title_en: 'Machine Tools', items: '立式加工中心,臥式加工中心,動柱式加工中心,立式龍門加工中心,小型雕銑機', items_en: 'Vertical Machining Centers,Horizontal Machining Centers,Moving Column MC,Gantry Machining Centers,Compact Engraving Machines' },
+      { title: '配件與週邊', title_en: 'Accessories', items: '傳動座,尾端軸承座,主軸馬達調整版,標準地基螺栓組', items_en: 'Drive Units,Tail Bearing Housings,Spindle Motor Plates,Standard Foundation Bolt Sets' },
+      { title: '中古機專區', title_en: 'Used Machines', items: '二手中古機,加工中心空機,整備翻修服務', items_en: 'Pre-owned Machines,Bare Machining Centers,Refurbishment Services' },
+    ],
+    cap_title: '產品與服務能量', cap_title_en: 'Products & Services',
+    cap_desc: '從精密零組件到整機，完整涵蓋工具機產業上下游所需。',
+    cap_desc_en: 'From precision components to complete machines, covering the full spectrum of machine tool industry needs.',
   };
 
   const [form, setForm] = useState(defaults);
 
   useEffect(() => {
-    if (data.page_about) setForm(prev => ({ ...prev, ...data.page_about }));
+    if (data.page_about) {
+      const saved = data.page_about;
+      setForm(prev => ({
+        ...prev,
+        ...saved,
+        capabilities: saved.capabilities || prev.capabilities,
+      }));
+    }
   }, [data]);
 
   function update(key, value) { setForm(prev => ({ ...prev, [key]: value })); }
@@ -275,6 +291,26 @@ function AboutPageEditor({ data, onSave, saving }) {
       if (newIdx < 0 || newIdx >= arr.length) return prev;
       [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
       return { ...prev, milestones: arr };
+    });
+  }
+
+  /* 產品能量：新增 / 刪除 */
+  function addCapability() {
+    setForm(prev => ({
+      ...prev,
+      capabilities: [...(prev.capabilities || []), { title: '', title_en: '', items: '', items_en: '' }],
+    }));
+  }
+  function removeCapability(idx) {
+    setForm(prev => ({ ...prev, capabilities: prev.capabilities.filter((_, i) => i !== idx) }));
+  }
+  function moveCapability(idx, dir) {
+    setForm(prev => {
+      const arr = [...prev.capabilities];
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= arr.length) return prev;
+      [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+      return { ...prev, capabilities: arr };
     });
   }
 
@@ -357,6 +393,30 @@ function AboutPageEditor({ data, onSave, saving }) {
           </div>
         ))}
         <button type="button" onClick={addMilestone} className="btn-outline !text-sm">+ 新增歷程</button>
+      </fieldset>
+
+      {/* 產品與服務能量 */}
+      <fieldset className="bg-white rounded-lg border p-5 space-y-3">
+        <legend className="text-base font-semibold px-2">產品與服務能量</legend>
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="label text-xs">區塊標題</label><input className="input !text-sm !py-1" value={form[s('cap_title')] || ''} onChange={e => update(s('cap_title'), e.target.value)} /></div>
+          <div><label className="label text-xs">區塊描述</label><input className="input !text-sm !py-1" value={form[s('cap_desc')] || ''} onChange={e => update(s('cap_desc'), e.target.value)} /></div>
+        </div>
+        {(form.capabilities || []).map((c, i) => (
+          <div key={i} className="flex gap-2 items-start border-b pb-3 last:border-0">
+            <div className="flex flex-col items-center gap-0.5 pt-5 shrink-0">
+              <button type="button" onClick={() => moveCapability(i, -1)} disabled={i === 0} className="text-gray-400 hover:text-brand disabled:opacity-20 text-xs">▲</button>
+              <span className="text-[10px] text-gray-400">{i + 1}</span>
+              <button type="button" onClick={() => moveCapability(i, 1)} disabled={i === (form.capabilities || []).length - 1} className="text-gray-400 hover:text-brand disabled:opacity-20 text-xs">▼</button>
+            </div>
+            <div className="flex-1 space-y-1">
+              <div><label className="label text-xs">分類名稱</label><input className="input !text-sm !py-1" value={c[s('title')] || ''} onChange={e => updateArrayItem('capabilities', i, s('title'), e.target.value)} placeholder={lang === 'zh' ? '例：精密機械零組件' : 'e.g. Precision Components'} /></div>
+              <div><label className="label text-xs">項目（以逗號分隔）</label><textarea className="input !text-sm !py-1" rows={2} value={c[s('items')] || ''} onChange={e => updateArrayItem('capabilities', i, s('items'), e.target.value)} placeholder={lang === 'zh' ? '例：斜楔,聯軸器,軸承座' : 'e.g. Gib Blocks,Couplings,Bearing Housings'} /></div>
+            </div>
+            <button type="button" onClick={() => removeCapability(i)} className="text-red-400 hover:text-red-600 text-lg mt-5 shrink-0" title="刪除">×</button>
+          </div>
+        ))}
+        <button type="button" onClick={addCapability} className="btn-outline !text-sm">+ 新增分類</button>
       </fieldset>
 
       <button onClick={handleSave} disabled={saving} className="btn-primary disabled:opacity-50">
