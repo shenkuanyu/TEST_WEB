@@ -1,7 +1,18 @@
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'dev-secret-change-me');
+// 取得 JWT secret:production 必須設環境變數
+function resolveSecret() {
+  const s = process.env.JWT_SECRET;
+  if (!s) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('[middleware] JWT_SECRET environment variable is required in production');
+    }
+    return 'dev-secret-change-me';
+  }
+  return s;
+}
+const SECRET = new TextEncoder().encode(resolveSecret());
 const SITE_CODE = process.env.SITE_CODE || 'machines';
 
 // 搜尋引擎與社群預覽爬蟲偵測 — 為了 SEO 穩定,爬蟲一律回中文版
