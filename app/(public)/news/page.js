@@ -30,11 +30,29 @@ export default function NewsPage() {
   const db = getDB();
   const locale = getLocale();
   const isEn = locale === 'en';
+  const site = getSiteMeta();
   const news = db.prepare('SELECT * FROM news WHERE published=1 ORDER BY id DESC').all()
     .map(n => ({ ...n, title: pickI18n(n, 'title', locale), summary: pickI18n(n, 'summary', locale) }));
 
+  const domain = site.code === 'machines'
+    ? 'https://poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: isEn ? 'Home' : '首頁', item: domain },
+      { '@type': 'ListItem', position: 2, name: isEn ? 'News' : '最新消息', item: `${domain}/news` },
+    ],
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <section className="bg-gray-50 py-16">
         <div className="container text-center">
           <p className="section-sub mb-3">NEWS</p>

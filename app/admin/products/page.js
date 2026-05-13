@@ -1,11 +1,13 @@
 'use client';
 import { useEffect, useState, lazy, Suspense } from 'react';
+import { useToast } from '@/components/admin/Toast';
 const RichTextEditor = lazy(() => import('@/components/RichTextEditor'));
 
 export default function AdminProducts() {
   const [list, setList] = useState([]);
   const [cats, setCats] = useState([]);
   const [editing, setEditing] = useState(null);
+  const toast = useToast();
 
   async function load() {
     const [p, c] = await Promise.all([
@@ -199,6 +201,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
   const [mainImgPreview, setMainImgPreview] = useState(null);
   const [dragIdx, setDragIdx] = useState(null);
   const [lang, setLang] = useState('zh'); // zh/en 語言切換
+  const toast = useToast();
 
   useEffect(() => {
     if (!product.id) return;
@@ -232,7 +235,11 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
     const method = product.id ? 'PUT' : 'POST';
     const r = await fetch(url, { method, body: fd });
     setSaving(false);
-    if (!r.ok) return alert('儲存失敗');
+    if (!r.ok) {
+      toast.error('儲存失敗');
+      return;
+    }
+    toast.success(product.id ? '已更新' : '已新增');
     const result = await r.json().catch(() => ({}));
     if (!product.id && result.id) product.id = result.id;
     // 更新主圖路徑（從伺服器回傳）
@@ -252,7 +259,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
   async function addImages(e) {
     const files = [...e.target.files];
     if (!files.length || !product.id) {
-      alert('請先儲存產品基本資料再上傳圖片');
+      toast.warning('請先儲存產品基本資料再上傳圖片');
       e.target.value = '';
       return;
     }
@@ -297,7 +304,7 @@ function ProductEditor({ product, categories, onClose, onSaved }) {
   async function addDownloads(e) {
     const files = [...e.target.files];
     if (!files.length || !product.id) {
-      alert('請先儲存產品基本資料再上傳檔案');
+      toast.warning('請先儲存產品基本資料再上傳檔案');
       e.target.value = '';
       return;
     }

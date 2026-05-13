@@ -1,10 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useToast } from '@/components/admin/Toast';
 
 export default function AdminNews() {
   const [list, setList] = useState([]);
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   async function load() {
     const r = await fetch('/api/admin/news').then(r => r.json());
@@ -20,7 +22,13 @@ export default function AdminNews() {
     const method = editing?.id ? 'PUT' : 'POST';
     const r = await fetch(url, { method, body: fd });
     setLoading(false);
-    if (r.ok) { setEditing(null); load(); } else alert('儲存失敗');
+    if (r.ok) {
+      setEditing(null);
+      load();
+      toast.success(editing?.id ? '已更新' : '已新增');
+    } else {
+      toast.error('儲存失敗');
+    }
   }
 
   async function remove(id) {

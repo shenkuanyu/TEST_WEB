@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
+import { useToast } from '@/components/admin/Toast';
 
 export default function AdminContacts() {
   const [list, setList] = useState([]);
@@ -9,6 +10,7 @@ export default function AdminContacts() {
   const [importing, setImporting] = useState(false);
   const [selected, setSelected] = useState(new Set());
   const fileRef = useRef(null);
+  const toast = useToast();
 
   async function load() {
     const r = await fetch('/api/admin/contacts').then(r => r.json());
@@ -30,7 +32,13 @@ export default function AdminContacts() {
       body: JSON.stringify(body),
     });
     setLoading(false);
-    if (r.ok) { setEditing(null); load(); } else alert('儲存失敗');
+    if (r.ok) {
+      setEditing(null);
+      load();
+      toast.success(editing?.id ? '已更新' : '已新增');
+    } else {
+      toast.error('儲存失敗');
+    }
   }
 
   async function remove(id) {
@@ -59,11 +67,11 @@ export default function AdminContacts() {
     e.target.value = '';
     if (r.ok) {
       const j = await r.json();
-      alert(`匯入成功！共 ${j.imported} 筆`);
+      toast.success(`匯入成功!共 ${j.imported} 筆`);
       load();
     } else {
       const j = await r.json().catch(() => ({}));
-      alert('匯入失敗：' + (j.error || '未知錯誤'));
+      toast.error('匯入失敗:' + (j.error || '未知錯誤'));
     }
   }
 

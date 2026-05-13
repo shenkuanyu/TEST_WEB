@@ -147,13 +147,34 @@ function getAboutData(locale) {
 
 export default function AboutPage() {
   const locale = getLocale();
+  const isEn = locale === 'en';
+  const site = getSiteMeta();
   const d = getAboutData(locale);
+
+  const domain = site.code === 'machines'
+    ? 'https://poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+
+  // BreadcrumbList Schema.org
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: isEn ? 'Home' : '首頁', item: domain },
+      { '@type': 'ListItem', position: 2, name: isEn ? 'About' : '公司介紹', item: `${domain}/about` },
+    ],
+  };
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Hero */}
       <section className="relative bg-gray-900 text-white py-24 overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
+        <div className="absolute inset-0 opacity-30" aria-hidden="true">
+          {/* 裝飾性背景圖,以 aria-hidden 排除於可達性樹外,避免重複 alt */}
           <img src="/uploads/about.jpg" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative container text-center">

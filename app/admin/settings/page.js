@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useToast } from '@/components/admin/Toast';
 
 const TABS = [
   { id: 'basic',     label: '基本資料' },
@@ -19,6 +20,7 @@ export default function AdminSettings() {
   const [msg, setMsg] = useState('');
   const [lineSubs, setLineSubs] = useState([]);
   const [lineSearch, setLineSearch] = useState('');
+  const toast = useToast();
 
   // 密碼修改
   const [pwCurrent, setPwCurrent] = useState('');
@@ -74,8 +76,8 @@ export default function AdminSettings() {
     });
     const r = await fetch('/api/admin/settings/test-line', { method: 'POST' });
     const j = await r.json().catch(() => ({}));
-    if (r.ok) alert(`✅ ${j.message}`);
-    else alert(`❌ ${j.error || '發送失敗'}`);
+    if (r.ok) toast.success(j.message);
+    else toast.error(j.error || '發送失敗');
   }
 
   async function toggleSub(userId, active) {
@@ -112,8 +114,8 @@ export default function AdminSettings() {
       body: JSON.stringify({ to }),
     });
     const j = await r.json().catch(() => ({}));
-    if (r.ok) alert(`✅ 測試信已發送到 ${to}，請檢查收件匣（也看看垃圾郵件）`);
-    else alert(`❌ 發送失敗：${j.error || '未知錯誤'}`);
+    if (r.ok) toast.success(`測試信已發送到 ${to},請檢查收件匣(也看看垃圾郵件)`, 5000);
+    else toast.error(`發送失敗:${j.error || '未知錯誤'}`);
   }
 
   // ===== 密碼修改 =====

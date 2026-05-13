@@ -21,6 +21,7 @@
     "migrate-details": "node scripts/migrate-product-details.js",
     "migrate-banner-pos": "node scripts/migrate-banner-position.js",
     "migrate-line": "node scripts/migrate-line-subscribers.js",
+    "migrate-seo-indexes": "node scripts/migrate-seo-indexes.js",
     "setup:all": "npm run split-db && npm run migrate-i18n && npm run seed-translations"
   },
   "dependencies": {

@@ -15,15 +15,28 @@ export default function Home() {
   const site = getSiteMeta();
   const isEn = locale === 'en';
 
-  const bannersRaw = db.prepare('SELECT * FROM banners WHERE active=1 ORDER BY sort_order').all();
+  const bannersRaw = db.prepare(`
+    SELECT id, image, link, title, title_en, subtitle, subtitle_en, position
+    FROM banners WHERE active=1 ORDER BY sort_order
+  `).all();
   const banners = bannersRaw.map(b => ({
     ...b,
     title: isEn ? (b.title_en || b.title) : b.title,
     subtitle: isEn ? (b.subtitle_en || b.subtitle) : b.subtitle,
   }));
-  const products = db.prepare('SELECT * FROM products WHERE published=1 ORDER BY sort_order, id DESC').all()
+  // 首頁產品輪播僅顯示前 12 個,且只 SELECT 卡片實際需要的欄位(避免拉 description / specs_md 等大欄位)
+  const products = db.prepare(`
+    SELECT id, name, name_en, model_code, image, summary, summary_en
+    FROM products WHERE published=1
+    ORDER BY sort_order, id DESC
+    LIMIT 12
+  `).all()
     .map(p => ({ ...p, name: pickI18n(p, 'name', locale), summary: pickI18n(p, 'summary', locale) }));
-  const news = db.prepare('SELECT * FROM news WHERE published=1 ORDER BY id DESC LIMIT 4').all()
+  const news = db.prepare(`
+    SELECT id, title, title_en, summary, summary_en, cover_image, created_at
+    FROM news WHERE published=1
+    ORDER BY id DESC LIMIT 4
+  `).all()
     .map(n => ({ ...n, title: pickI18n(n, 'title', locale), summary: pickI18n(n, 'summary', locale) }));
 
   const settings = {};
@@ -239,7 +252,7 @@ export default function Home() {
       <section className="relative bg-gray-900 text-white overflow-hidden">
         <div className="grid lg:grid-cols-2">
           <Reveal variant="fade-right" className="relative aspect-[16/10] lg:aspect-auto min-h-[320px]">
-            <img src="/uploads/contact-1.jpg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-70" />
+            <img src="/uploads/contact-1.jpg" alt={isEn ? 'Jeouyang Machinery factory in Taichung, Taiwan' : '久洋機械 — 台中潭子廠房外觀'} className="absolute inset-0 w-full h-full object-cover opacity-70" />
           </Reveal>
 
           <Reveal variant="fade-left" className="py-12 md:py-20 px-6 md:px-16 flex flex-col justify-center">

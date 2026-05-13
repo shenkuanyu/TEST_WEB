@@ -1,7 +1,16 @@
 import './globals.css';
+import { Noto_Sans_TC } from 'next/font/google';
 import { getAllSettings } from '@/lib/settings';
 import { getLocale } from '@/lib/i18n';
 import { getSiteMeta } from '@/lib/site';
+
+// 使用 next/font 自動 self-host 字體,避免阻擋渲染 + 避免 CLS
+const notoSansTC = Noto_Sans_TC({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
+  display: 'swap',
+  variable: '--font-noto-tc',
+});
 
 export async function generateMetadata() {
   const s = getAllSettings();
@@ -29,11 +38,13 @@ export async function generateMetadata() {
     },
     metadataBase: new URL(domain),
     alternates: {
-      canonical: '/',
-      // 告訴 Google 本頁有兩種語言版本，使用者依 locale cookie 切換
+      // 每個語系獨立的 canonical 避免重複內容問題
+      canonical: isEn ? `${domain}/?lang=en` : `${domain}/?lang=zh`,
       languages: {
-        'zh-Hant': domain,
+        'zh-Hant': `${domain}/?lang=zh`,
         en: `${domain}/?lang=en`,
+        // x-default 指向該站「預設語言」對應的 URL
+        'x-default': site.code === 'machines' ? `${domain}/?lang=en` : `${domain}/?lang=zh`,
       },
     },
     openGraph: {
@@ -95,7 +106,15 @@ export default function RootLayout({ children }) {
       areaServed: ['TW', 'Worldwide'],
       availableLanguage: ['zh-Hant', 'en'],
     }],
-    sameAs: [],
+    // 從後台設定讀社群連結,協助 Google 建立 Knowledge Graph 關聯
+    sameAs: [
+      s.social_facebook,
+      s.social_line,
+      s.social_instagram,
+      s.social_youtube,
+      s.social_linkedin,
+      s.social_whatsapp ? `https://wa.me/${String(s.social_whatsapp).replace(/[^\d]/g, '')}` : null,
+    ].filter(Boolean),
   };
 
   const siteUrl = site.code === 'machines'
@@ -122,19 +141,20 @@ export default function RootLayout({ children }) {
     },
   };
 
-  return (
-    <html lang="zh-Hant">
-      <head>
-        {/* hreflang：告知 Google 本站有雙語版本 */}
-        <link rel="alternate" hrefLang="zh-Hant" href="/" />
-        <link rel="alternate" hrefLang="en" href="/?lang=en" />
-        <link rel="alternate" hrefLang="x-default" href="/" />
+  // hreflang 必須使用絕對 URL,且每站獨立判斷預設語言
+  const isMachines = site.code === 'machines';
+  const hrefZh = `${siteUrl}/?lang=zh`;
+  const hrefEn = `${siteUrl}/?lang=en`;
+  // x-default 指向「該站的預設語系」(機台預設英文、零組件預設中文)
+  const hrefDefault = isMachines ? hrefEn : hrefZh;
 
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
-          rel="stylesheet"
-        />
+  return (
+    <html lang="zh-Hant" className={notoSansTC.variable}>
+      <head>
+        {/* hreflang:每站獨立宣告,使用絕對 URL (Google 規範) */}
+        <link rel="alternate" hrefLang="zh-Hant" href={hrefZh} />
+        <link rel="alternate" hrefLang="en" href={hrefEn} />
+        <link rel="alternate" hrefLang="x-default" href={hrefDefault} />
 
         {/* Schema.org 結構化資料 */}
         <script
@@ -169,7 +189,7 @@ export default function RootLayout({ children }) {
 
         {headHtml && <div dangerouslySetInnerHTML={{ __html: headHtml }} />}
       </head>
-      <body className="font-sans antialiased">
+      <body className={`${notoSansTC.className} antialiased`}>
         {gtm && (
           <noscript>
             <iframe

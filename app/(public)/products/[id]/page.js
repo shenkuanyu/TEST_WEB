@@ -212,7 +212,7 @@ export default function ProductDetail({ params }) {
       '@type': 'Brand',
       name: site.code === 'machines' ? 'POSHTECH' : 'Jeouyang',
     },
-    manufacturer: { '@id': 'https://jeouyang.com.tw/#organization' },
+    manufacturer: { '@id': 'https://poshtech.com.tw/#organization' },
     category: product.category_name,
     offers: {
       '@type': 'Offer',
@@ -220,7 +220,7 @@ export default function ProductDetail({ params }) {
       priceCurrency: 'TWD',
       price: Number(product.price) > 0 ? Number(product.price) : undefined,
       availability: 'https://schema.org/InStock',
-      seller: { '@id': 'https://jeouyang.com.tw/#organization' },
+      seller: { '@id': 'https://poshtech.com.tw/#organization' },
       // B2B 產品若無標價，使用 priceSpecification 表示「請洽詢」
       ...(Number(product.price) <= 0 ? {
         priceSpecification: {
@@ -270,9 +270,9 @@ export default function ProductDetail({ params }) {
     <div>
       <div className="bg-gray-50 border-b border-gray-100">
         <div className="container py-3 text-sm text-gray-500">
-          <Link href="/" className="hover:text-brand">首頁</Link>
+          <Link href="/" className="hover:text-brand">{isEn ? 'Home' : '首頁'}</Link>
           <span className="mx-2">/</span>
-          <Link href="/products" className="hover:text-brand">產品資訊</Link>
+          <Link href="/products" className="hover:text-brand">{isEn ? 'Products' : '產品資訊'}</Link>
           {product.category_name && (
             <>
               <span className="mx-2">/</span>

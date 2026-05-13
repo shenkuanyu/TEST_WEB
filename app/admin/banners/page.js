@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { useToast } from '@/components/admin/Toast';
 
 export default function AdminBanners() {
   const [list, setList] = useState([]);
@@ -8,6 +9,7 @@ export default function AdminBanners() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [imgPos, setImgPos] = useState({ x: 50, y: 50 });
   const [imgScale, setImgScale] = useState(1);
+  const toast = useToast();
 
   const dragging = useRef(false);
   const lastPoint = useRef({ x: 0, y: 0 });
@@ -104,7 +106,14 @@ export default function AdminBanners() {
     const method = editing?.id ? 'PUT' : 'POST';
     const r = await fetch(url, { method, body: fd });
     setLoading(false);
-    if (r.ok) { setEditing(null); setPreviewUrl(null); load(); } else alert('儲存失敗');
+    if (r.ok) {
+      setEditing(null);
+      setPreviewUrl(null);
+      load();
+      toast.success(editing?.id ? '已更新' : '已新增');
+    } else {
+      toast.error('儲存失敗');
+    }
   }
 
   async function remove(id) {

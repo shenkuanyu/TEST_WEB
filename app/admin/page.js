@@ -6,20 +6,24 @@ export const dynamic = 'force-dynamic';
 export default function AdminDashboard() {
   const db = getDB();
 
-  // 基本統計
+  // 把多個 COUNT 合併成一支 query,減少 IPC overhead
+  const stats = db.prepare(`
+    SELECT
+      (SELECT COUNT(*) FROM products) AS products,
+      (SELECT COUNT(*) FROM products WHERE published=1) AS published,
+      (SELECT COUNT(*) FROM news) AS news,
+      (SELECT COUNT(*) FROM members) AS members,
+      (SELECT COUNT(*) FROM orders) AS orders,
+      (SELECT COUNT(*) FROM orders WHERE created_at >= datetime('now', '-7 days')) AS recent_orders
+  `).get();
   const s = {
-    products: db.prepare('SELECT COUNT(*) c FROM products').get().c,
-    published: db.prepare('SELECT COUNT(*) c FROM products WHERE published=1').get().c,
-    news: db.prepare('SELECT COUNT(*) c FROM news').get().c,
-    members: db.prepare('SELECT COUNT(*) c FROM members').get().c,
-    orders: db.prepare('SELECT COUNT(*) c FROM orders').get().c,
+    products: stats.products,
+    published: stats.published,
+    news: stats.news,
+    members: stats.members,
+    orders: stats.orders,
   };
-
-  // 最近 7 天的詢價數
-  let recentOrders = 0;
-  try {
-    recentOrders = db.prepare("SELECT COUNT(*) c FROM orders WHERE created_at >= datetime('now', '-7 days')").get().c;
-  } catch {}
+  const recentOrders = stats.recent_orders || 0;
 
   // 最近 5 筆詢價
   const recent = db.prepare('SELECT * FROM orders ORDER BY id DESC LIMIT 5').all();

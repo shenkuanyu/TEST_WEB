@@ -49,6 +49,7 @@ export async function generateMetadata({ params }) {
 export default function NewsDetail({ params }) {
   const db = getDB();
   const locale = getLocale();
+  const site = getSiteMeta();
   const isEn = locale === 'en';
   const raw = db.prepare('SELECT * FROM news WHERE id=? AND published=1').get(Number(params.id));
   if (!raw) notFound();
@@ -60,9 +61,69 @@ export default function NewsDetail({ params }) {
     content: pickI18n(raw, 'content', locale),
   };
 
+  const domain = site.code === 'machines'
+    ? 'https://poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+  const publisherName = site.code === 'machines' ? 'POSHTECH / Jeouyang Machinery' : 'Jeouyang Components';
+
+  // NewsArticle Schema.org — 讓 Google 搜尋結果顯示日期、縮圖、出版者
+  const newsArticleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: item.title,
+    description: item.summary || (item.content ? String(item.content).replace(/<[^>]*>/g, '').slice(0, 160) : ''),
+    image: item.cover_image ? [`${domain}${item.cover_image}`] : undefined,
+    datePublished: item.created_at,
+    dateModified: item.updated_at || item.created_at,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${domain}/news/${params.id}` },
+    publisher: {
+      '@type': 'Organization',
+      '@id': 'https://poshtech.com.tw/#organization',
+      name: publisherName,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${domain}/uploads/logo.png`,
+      },
+    },
+    author: {
+      '@type': 'Organization',
+      '@id': 'https://poshtech.com.tw/#organization',
+      name: publisherName,
+    },
+    inLanguage: isEn ? 'en' : 'zh-Hant',
+  };
+
+  // BreadcrumbList — 麵包屑導航結構化資料
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: isEn ? 'Home' : '首頁', item: domain },
+      { '@type': 'ListItem', position: 2, name: isEn ? 'News' : '最新消息', item: `${domain}/news` },
+      { '@type': 'ListItem', position: 3, name: item.title, item: `${domain}/news/${params.id}` },
+    ],
+  };
+
   return (
     <div className="container py-16 max-w-3xl">
-      <Link href="/news" className="text-sm text-gray-500 hover:text-black">{isEn ? '← Back to News' : '← 返回消息列表'}</Link>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
+      {/* 視覺麵包屑 */}
+      <nav aria-label="breadcrumb" className="text-sm text-gray-500 mb-4">
+        <Link href="/" className="hover:text-brand">{isEn ? 'Home' : '首頁'}</Link>
+        <span className="mx-2">/</span>
+        <Link href="/news" className="hover:text-brand">{isEn ? 'News' : '最新消息'}</Link>
+        <span className="mx-2">/</span>
+        <span className="text-gray-800">{item.title}</span>
+      </nav>
+
       <article className="mt-6">
         <p className="text-xs tracking-widest text-gray-400">{item.created_at?.slice(0, 10)}</p>
         <h1 className="text-3xl md:text-4xl font-light mt-3 mb-6">{item.title}</h1>

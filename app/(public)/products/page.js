@@ -38,8 +38,29 @@ export default function ProductsPage({ searchParams }) {
   const db = getDB();
   const locale = getLocale();
   const isEn = locale === 'en';
+  const site = getSiteMeta();
   const cats = db.prepare('SELECT * FROM categories ORDER BY sort_order').all();
   const cat = searchParams?.cat ? Number(searchParams.cat) : null;
+
+  const domain = site.code === 'machines'
+    ? 'https://poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+
+  // BreadcrumbList Schema.org
+  const currentCat = cat ? cats.find(c => c.id === cat) : null;
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: isEn ? 'Home' : '首頁', item: domain },
+      { '@type': 'ListItem', position: 2, name: isEn ? 'Products' : '產品資訊', item: `${domain}/products` },
+      ...(currentCat ? [{
+        '@type': 'ListItem', position: 3,
+        name: (isEn && currentCat.name_en) ? currentCat.name_en : currentCat.name,
+        item: `${domain}/products?cat=${currentCat.id}`,
+      }] : []),
+    ],
+  };
 
   const sql = cat
     ? 'SELECT * FROM products WHERE published=1 AND category_id=? ORDER BY sort_order, id DESC'
@@ -54,6 +75,10 @@ export default function ProductsPage({ searchParams }) {
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <section className="bg-gray-50 py-16">
         <div className="container text-center">
           <p className="section-sub mb-3">PRODUCTS</p>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getAdminSession } from '@/lib/auth';
 import { getCurrentAdminSite } from '@/lib/admin-db';
+import { ToastContainer } from '@/components/admin/Toast';
 
 export const dynamic = 'force-dynamic';
 
@@ -72,6 +73,7 @@ export default async function AdminLayout({ children }) {
         </Link>
       </aside>
       <main className="flex-1 p-8 overflow-x-auto text-base [&_*]:!text-base">{children}</main>
+      <ToastContainer />
     </div>
   );
 }
