@@ -2,8 +2,49 @@ import { getDB } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getLocale, pickI18n } from '@/lib/i18n';
+import { getSiteMeta } from '@/lib/site';
 
 export const revalidate = 60;
+
+export async function generateMetadata({ params }) {
+  const db = getDB();
+  const locale = getLocale();
+  const site = getSiteMeta();
+  const isEn = locale === 'en';
+  const n = db.prepare('SELECT * FROM news WHERE id=? AND published=1').get(Number(params.id));
+  if (!n) return {};
+
+  const title = pickI18n(n, 'title', locale);
+  const summary = pickI18n(n, 'summary', locale);
+  const content = pickI18n(n, 'content', locale);
+  const brandPrefix = site.code === 'machines'
+    ? (isEn ? 'POSHTECH | ' : '久洋機械 | ')
+    : (isEn ? 'Jeouyang | ' : '久洋零組件 | ');
+  const domain = site.code === 'machines'
+    ? 'https://poshtech.com.tw'
+    : 'https://parts.poshtech.com.tw';
+
+  const descRaw = (summary || (content ? String(content).replace(/<[^>]*>/g, '').slice(0, 160) : '')) || title;
+
+  return {
+    title: `${brandPrefix}${title}`,
+    description: descRaw,
+    alternates: { canonical: `${domain}/news/${params.id}` },
+    robots: { index: true, follow: true },
+    openGraph: {
+      title: `${brandPrefix}${title}`,
+      description: descRaw,
+      type: 'article',
+      url: `${domain}/news/${params.id}`,
+      images: n.cover_image ? [`${domain}${n.cover_image}`] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${brandPrefix}${title}`,
+      description: descRaw,
+    },
+  };
+}
 
 export default function NewsDetail({ params }) {
   const db = getDB();

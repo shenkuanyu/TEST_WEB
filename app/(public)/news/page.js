@@ -18,7 +18,7 @@ export function generateMetadata() {
       ? `Latest news and updates from ${site.brand_en}. New products, exhibitions, and company announcements.`
       : `${site.brand_zh}最新消息：新產品發表、展覽資訊、公司動態。`,
     alternates: { canonical: `${domain}/news` },
-    robots: { index: false, follow: false },
+    robots: { index: true, follow: true },
     openGraph: {
       title: isEn ? `News — ${site.brand_en}` : `最新消息 — ${site.brand_zh}`,
       url: `${domain}/news`,

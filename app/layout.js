@@ -68,14 +68,14 @@ export default function RootLayout({ children }) {
   const orgJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    '@id': 'https://jeouyang.com.tw/#organization',
+    '@id': 'https://poshtech.com.tw/#organization',
     name: 'Jeouyang Machinery Co., Ltd.',
-    alternateName: ['POSHTECH', '久洋機械', '久洋機械股份有限公司', 'Jeouyang'],
-    url: 'https://jeouyang.com.tw',
+    alternateName: ['POSHTECH', '久洋機械', '久洋機械股份有限公司', 'Jeouyang', 'Jeouyang Machinery'],
+    url: 'https://poshtech.com.tw',
     logo: {
       '@type': 'ImageObject',
-      url: 'https://jeouyang.com.tw/uploads/logo.png',
-      caption: 'POSHTECH / Jeouyang Machinery',
+      url: 'https://poshtech.com.tw/uploads/logo.png',
+      caption: 'POSHTECH / Jeouyang Machinery / 久洋機械',
     },
     description: site.seo_description_en,
     foundingDate: '1994',
@@ -114,7 +114,7 @@ export default function RootLayout({ children }) {
       : ['久洋零組件', 'POSHTECH Components', 'Jeouyang Components'],
     url: siteUrl,
     inLanguage: ['zh-Hant', 'en'],
-    publisher: { '@id': 'https://jeouyang.com.tw/#organization' },
+    publisher: { '@id': 'https://poshtech.com.tw/#organization' },
     potentialAction: {
       '@type': 'SearchAction',
       target: `${siteUrl}/products?q={search_term_string}`,

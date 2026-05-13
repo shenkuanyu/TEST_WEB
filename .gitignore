@@ -30,6 +30,12 @@ public/uploads/*
 # 型錄資料（僅本機使用，不部署到網站）
 型錄/
 
+# 內部文件（工作日誌、使用說明書、技術文件等 — 不部署）
+docs/
+
+# Claude Code 工作目錄
+.claude/
+
 # 編輯器/作業系統
 .DS_Store
 .vscode/*.log

@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
     alternates: {
       canonical: `${domain}/products/${params.id}`,
     },
-    robots: { index: false, follow: false },
+    robots: { index: true, follow: true },
     openGraph: {
       title: `${brandPrefix}${name}`,
       description: summary || descFallback,

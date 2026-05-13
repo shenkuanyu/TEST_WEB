@@ -23,7 +23,7 @@ export async function generateMetadata() {
     alternates: {
       canonical: `${domain}/products`,
     },
-    robots: { index: false, follow: false },
+    robots: { index: true, follow: true },
     openGraph: {
       title: isEn
         ? `${brand}Products — ${site.brand_en}`
