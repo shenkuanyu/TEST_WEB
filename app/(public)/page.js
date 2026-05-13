@@ -16,10 +16,9 @@ export default function Home() {
   const site = getSiteMeta();
   const isEn = locale === 'en';
 
-  const bannersRaw = db.prepare(`
-    SELECT id, image, link, title, title_en, subtitle, subtitle_en, position
-    FROM banners WHERE active=1 ORDER BY sort_order
-  `).all();
+  // 注意:banners 的欄位由執行期 ALTER TABLE 動態加(title_en/subtitle_en/image_position 都不一定存在於本機 schema)
+  // 為了相容性,改回 SELECT *,讓不存在的欄位回傳 undefined 而不是 SQL error
+  const bannersRaw = db.prepare('SELECT * FROM banners WHERE active=1 ORDER BY sort_order').all();
   const banners = bannersRaw.map(b => ({
     ...b,
     title: isEn ? (b.title_en || b.title) : b.title,
