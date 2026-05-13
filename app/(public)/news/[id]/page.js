@@ -1,6 +1,7 @@
 import { getDB } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getLocale, pickI18n } from '@/lib/i18n';
 import { getSiteMeta } from '@/lib/site';
 
@@ -128,7 +129,16 @@ export default function NewsDetail({ params }) {
         <p className="text-xs tracking-widest text-gray-400">{item.created_at?.slice(0, 10)}</p>
         <h1 className="text-3xl md:text-4xl font-light mt-3 mb-6">{item.title}</h1>
         {item.cover_image && (
-          <img src={item.cover_image} alt={item.title} className="w-full rounded-lg mb-8" />
+          <div className="relative aspect-[16/9] w-full rounded-lg overflow-hidden mb-8">
+            <Image
+              src={item.cover_image}
+              alt={item.title}
+              fill
+              sizes="(min-width: 768px) 768px, 100vw"
+              priority
+              className="object-cover"
+            />
+          </div>
         )}
         <div className="prose max-w-none text-gray-700 whitespace-pre-line leading-loose">
           {item.content}

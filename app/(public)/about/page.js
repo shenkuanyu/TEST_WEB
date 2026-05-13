@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getSiteMeta } from '@/lib/site';
 import { getLocale } from '@/lib/i18n';
 import { getDB } from '@/lib/db';
@@ -175,7 +176,7 @@ export default function AboutPage() {
       <section className="relative bg-gray-900 text-white py-24 overflow-hidden">
         <div className="absolute inset-0 opacity-30" aria-hidden="true">
           {/* 裝飾性背景圖,以 aria-hidden 排除於可達性樹外,避免重複 alt */}
-          <img src="/uploads/about.jpg" alt="" className="w-full h-full object-cover" />
+          <Image src="/uploads/about.jpg" alt="" fill sizes="100vw" priority className="object-cover" />
         </div>
         <div className="relative container text-center">
           <p className="text-sm tracking-[0.4em] text-brand mb-4">{d.hero_subtitle}</p>
@@ -187,8 +188,15 @@ export default function AboutPage() {
       {/* 公司簡介 */}
       <section className="container py-20">
         <div className="grid md:grid-cols-2 gap-14 items-center">
-          <div>
-            <img src="/uploads/about.jpg" alt="久洋機械" className="rounded-lg w-full shadow-sm" />
+          <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-sm">
+            <Image
+              src="/uploads/about.jpg"
+              alt={isEn ? 'Jeouyang Machinery facility' : '久洋機械'}
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-cover"
+              loading="lazy"
+            />
           </div>
           <div>
             <h2 className="text-3xl md:text-4xl font-light mb-6 leading-snug">

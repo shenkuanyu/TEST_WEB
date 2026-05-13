@@ -1,13 +1,18 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ProductCard({ product }) {
+  const src = product.image || '/uploads/placeholder.svg';
   return (
     <Link href={`/products/${product.id}`} className="card group block">
-      <div className="aspect-[4/3] bg-gray-100 overflow-hidden flex items-center justify-center">
-        <img
-          src={product.image || '/uploads/placeholder.svg'}
+      <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden flex items-center justify-center">
+        <Image
+          src={src}
           alt={product.name}
-          className="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-500"
+          fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+          className="object-contain group-hover:scale-105 transition duration-500"
+          loading="lazy"
         />
       </div>
       <div className="p-4">

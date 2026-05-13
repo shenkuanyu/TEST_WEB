@@ -1,6 +1,7 @@
 import { getDB } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import ProductGallery from '@/components/ProductGallery';
 import ProductTabs from '@/components/ProductTabs';
 import { mdToHtml } from '@/lib/markdown';
@@ -425,8 +426,15 @@ export default function ProductDetail({ params }) {
                 const rSummary = pickI18n(r, 'summary', locale);
                 return (
                 <Link key={r.id} href={`/products/${r.id}`} className="card group block">
-                  <div className="aspect-[4/3] bg-gray-100 overflow-hidden">
-                    <img src={r.image || '/uploads/placeholder.svg'} alt={rName} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                  <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                    <Image
+                      src={r.image || '/uploads/placeholder.svg'}
+                      alt={rName}
+                      fill
+                      sizes="(min-width: 768px) 33vw, 50vw"
+                      className="object-cover group-hover:scale-105 transition duration-500"
+                      loading="lazy"
+                    />
                   </div>
                   <div className="p-4">
                     {r.model_code && <p className="text-xs font-mono text-brand mb-1">{r.model_code}</p>}

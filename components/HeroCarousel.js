@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 /** 解析 "50% 30% 1.2" → { pos, scale } */
 function parseImagePos(str) {
@@ -56,20 +57,25 @@ export default function HeroCarousel({ banners = [], locale = 'zh' }) {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {banners.map((b, i) => (
+      {banners.map((b, i) => {
+        const pos = parseImagePos(b.image_position);
+        const isFirst = i === 0;
+        return (
         <div
           key={b.id}
           className={`absolute inset-0 transition-opacity duration-1000 ${i === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
         >
-          <img
+          <Image
             src={b.image}
             alt={b.title || ''}
-            className="w-full h-full object-cover"
+            fill
+            sizes="100vw"
+            priority={isFirst}
+            loading={isFirst ? 'eager' : 'lazy'}
+            className="object-cover"
             style={{
-              objectPosition: parseImagePos(b.image_position).pos,
-              transform: parseImagePos(b.image_position).scale !== 1
-                ? `scale(${parseImagePos(b.image_position).scale})`
-                : undefined,
+              objectPosition: pos.pos,
+              transform: pos.scale !== 1 ? `scale(${pos.scale})` : undefined,
             }}
             draggable={false}
           />
@@ -96,7 +102,8 @@ export default function HeroCarousel({ banners = [], locale = 'zh' }) {
             )}
           </div>
         </div>
-      ))}
+        );
+      })}
 
       {/* 輪播指示器 */}
       {banners.length > 1 && (

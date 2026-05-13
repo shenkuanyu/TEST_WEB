@@ -1,6 +1,7 @@
 'use client';
 import { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HomeProductCarousel({ products = [] }) {
   const trackRef = useRef(null);
@@ -84,11 +85,14 @@ export default function HomeProductCarousel({ products = [] }) {
             href={`/products/${p.id}`}
             className="group relative shrink-0 w-[280px] md:w-[380px] aspect-[4/3] overflow-hidden rounded-sm bg-gray-200"
           >
-            <img
+            <Image
               src={p.image || '/uploads/placeholder.svg'}
               alt={p.name}
-              className="absolute inset-0 w-full h-full object-contain group-hover:scale-110 transition duration-700"
+              fill
+              sizes="(min-width: 768px) 380px, 280px"
+              className="object-contain group-hover:scale-110 transition duration-700"
               draggable={false}
+              loading={i < 3 ? 'eager' : 'lazy'}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between">

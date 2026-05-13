@@ -1,14 +1,19 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function NewsCard({ item }) {
   const date = item.created_at?.slice(0, 10);
+  const src = item.cover_image || '/uploads/placeholder.svg';
   return (
     <Link href={`/news/${item.id}`} className="card group block">
-      <div className="aspect-[16/9] bg-gray-100 overflow-hidden">
-        <img
-          src={item.cover_image || '/uploads/placeholder.svg'}
+      <div className="relative aspect-[16/9] bg-gray-100 overflow-hidden">
+        <Image
+          src={src}
           alt={item.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+          fill
+          sizes="(min-width: 768px) 33vw, 100vw"
+          className="object-cover group-hover:scale-105 transition duration-500"
+          loading="lazy"
         />
       </div>
       <div className="p-4">

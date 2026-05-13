@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import HeroCarousel from '@/components/HeroCarousel';
 import HomeProductCarousel from '@/components/HomeProductCarousel';
 import NewsCard from '@/components/NewsCard';
@@ -106,10 +107,13 @@ export default function Home() {
                   key={i}
                   className="group relative aspect-[3/5] overflow-hidden rounded-sm bg-gray-200"
                 >
-                  <img
+                  <Image
                     src={t.img}
                     alt={t.label}
-                    className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                    fill
+                    sizes="(min-width: 1024px) 25vw, 33vw"
+                    className="object-cover group-hover:scale-110 transition duration-700"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
@@ -183,11 +187,14 @@ export default function Home() {
                     href={`/news/${n.id}`}
                     className="group flex gap-3 sm:gap-4 md:gap-8 items-center py-4 md:py-6 hover:bg-gray-50 transition px-2"
                   >
-                    <div className="w-20 sm:w-24 md:w-48 shrink-0 aspect-[16/10] overflow-hidden rounded-sm bg-gray-100">
-                      <img
+                    <div className="relative w-20 sm:w-24 md:w-48 shrink-0 aspect-[16/10] overflow-hidden rounded-sm bg-gray-100">
+                      <Image
                         src={n.cover_image || '/uploads/placeholder.svg'}
                         alt={n.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                        fill
+                        sizes="(min-width: 768px) 192px, 96px"
+                        className="object-cover group-hover:scale-110 transition duration-700"
+                        loading="lazy"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -252,7 +259,14 @@ export default function Home() {
       <section className="relative bg-gray-900 text-white overflow-hidden">
         <div className="grid lg:grid-cols-2">
           <Reveal variant="fade-right" className="relative aspect-[16/10] lg:aspect-auto min-h-[320px]">
-            <img src="/uploads/contact-1.jpg" alt={isEn ? 'Jeouyang Machinery factory in Taichung, Taiwan' : '久洋機械 — 台中潭子廠房外觀'} className="absolute inset-0 w-full h-full object-cover opacity-70" />
+            <Image
+              src="/uploads/contact-1.jpg"
+              alt={isEn ? 'Jeouyang Machinery factory in Taichung, Taiwan' : '久洋機械 — 台中潭子廠房外觀'}
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover opacity-70"
+              loading="lazy"
+            />
           </Reveal>
 
           <Reveal variant="fade-left" className="py-12 md:py-20 px-6 md:px-16 flex flex-col justify-center">
