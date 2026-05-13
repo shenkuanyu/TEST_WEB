@@ -1,6 +1,9 @@
 import { SITE_CODE } from '@/lib/site';
 import { getDB } from '@/lib/db';
 
+// 每小時重新產生一次,確保新發布的產品/新聞會進入 sitemap
+export const revalidate = 3600;
+
 export default function sitemap() {
   const domain = SITE_CODE === 'machines'
     ? 'https://poshtech.com.tw'
@@ -23,10 +26,10 @@ export default function sitemap() {
     const db = getDB();
 
     const products = db.prepare(
-      'SELECT id, updated_at, created_at FROM products WHERE published=1'
+      'SELECT id, created_at FROM products WHERE published=1'
     ).all();
     const news = db.prepare(
-      'SELECT id, updated_at, created_at FROM news WHERE published=1'
+      'SELECT id, created_at FROM news WHERE published=1'
     ).all();
 
     dynamicPages = [
@@ -34,17 +37,17 @@ export default function sitemap() {
         url: `${domain}/products/${p.id}`,
         changeFrequency: 'monthly',
         priority: 0.8,
-        lastModified: p.updated_at ? new Date(p.updated_at) : (p.created_at ? new Date(p.created_at) : now),
+        lastModified: p.created_at ? new Date(p.created_at) : now,
       })),
       ...news.map(n => ({
         url: `${domain}/news/${n.id}`,
         changeFrequency: 'monthly',
         priority: 0.6,
-        lastModified: n.updated_at ? new Date(n.updated_at) : (n.created_at ? new Date(n.created_at) : now),
+        lastModified: n.created_at ? new Date(n.created_at) : now,
       })),
     ];
   } catch (e) {
-    // DB 尚未就緒(build 期間)時忽略,只回靜態頁
+    console.error('[sitemap] failed to read DB:', e?.message);
   }
 
   return [...staticPages, ...dynamicPages];
