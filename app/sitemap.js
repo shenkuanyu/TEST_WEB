@@ -20,30 +20,26 @@ export default function sitemap() {
     { url: `${domain}/contact`,  changeFrequency: 'monthly', priority: 0.7,  lastModified: now },
   ];
 
-  // 動態頁:產品與新聞
+  // 動態頁:產品與新聞 (只查最小欄位 id,確保不會因為欄位差異炸掉)
   let dynamicPages = [];
   try {
     const db = getDB();
 
-    const products = db.prepare(
-      'SELECT id, created_at FROM products WHERE published=1'
-    ).all();
-    const news = db.prepare(
-      'SELECT id, created_at FROM news WHERE published=1'
-    ).all();
+    const products = db.prepare('SELECT id FROM products WHERE published=1').all();
+    const news = db.prepare('SELECT id FROM news WHERE published=1').all();
 
     dynamicPages = [
       ...products.map(p => ({
         url: `${domain}/products/${p.id}`,
         changeFrequency: 'monthly',
         priority: 0.8,
-        lastModified: p.created_at ? new Date(p.created_at) : now,
+        lastModified: now,
       })),
       ...news.map(n => ({
         url: `${domain}/news/${n.id}`,
         changeFrequency: 'monthly',
         priority: 0.6,
-        lastModified: n.created_at ? new Date(n.created_at) : now,
+        lastModified: now,
       })),
     ];
   } catch (e) {

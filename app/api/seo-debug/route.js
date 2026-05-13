@@ -41,6 +41,19 @@ export async function GET() {
     }
 
     try {
+      const cols = db.prepare("PRAGMA table_info(products)").all();
+      result.db.productsColumns = cols.map(c => c.name);
+    } catch (e) {
+      result.db.productsColumnsError = e?.message;
+    }
+    try {
+      const cols = db.prepare("PRAGMA table_info(news)").all();
+      result.db.newsColumns = cols.map(c => c.name);
+    } catch (e) {
+      result.db.newsColumnsError = e?.message;
+    }
+
+    try {
       const rows = db.prepare('SELECT id FROM products WHERE published=1 LIMIT 5').all();
       result.db.productsCount = db.prepare('SELECT COUNT(*) c FROM products WHERE published=1').get().c;
       result.db.sampleProductIds = rows.map(r => r.id);
@@ -54,6 +67,22 @@ export async function GET() {
       result.db.sampleNewsIds = rows.map(r => r.id);
     } catch (e) {
       result.db.newsQueryError = e?.message;
+    }
+
+    // 嘗試 sitemap 用的 SQL,看會不會炸
+    try {
+      const rows = db.prepare('SELECT id, created_at FROM products WHERE published=1 LIMIT 3').all();
+      result.db.sitemapProductsQueryOk = true;
+      result.db.sitemapProductsSample = rows;
+    } catch (e) {
+      result.db.sitemapProductsQueryError = e?.message;
+    }
+    try {
+      const rows = db.prepare('SELECT id, created_at FROM news WHERE published=1 LIMIT 3').all();
+      result.db.sitemapNewsQueryOk = true;
+      result.db.sitemapNewsSample = rows;
+    } catch (e) {
+      result.db.sitemapNewsQueryError = e?.message;
     }
   } catch (e) {
     result.db.connectError = e?.message;
