@@ -1,8 +1,8 @@
 import { SITE_CODE } from '@/lib/site';
 import { getDB } from '@/lib/db';
 
-// 每小時重新產生一次,確保新發布的產品/新聞會進入 sitemap
-export const revalidate = 3600;
+// 強制每次 request 動態產生,避免 build 時連不到 DB volume 而漏掉產品/新聞
+export const dynamic = 'force-dynamic';
 
 export default function sitemap() {
   const domain = SITE_CODE === 'machines'
